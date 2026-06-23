@@ -5,7 +5,7 @@
 // Si ya hay sesión guardada y estamos en la pantalla de login, redirigir
 const sesionExistente = JSON.parse(localStorage.getItem('sesion_usuario') || 'null');
 if (sesionExistente && window.location.pathname.toLowerCase().includes('inicio_sesion')) {
-    window.location.href = 'panel_control.html';
+    window.location.href = './Index_pagina/panel_control.html';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
