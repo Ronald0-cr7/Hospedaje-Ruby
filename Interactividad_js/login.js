@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             localStorage.setItem('sesion_usuario', JSON.stringify(sesion));
-            window.location.href = 'panel_control.html';
+            window.location.href = '/Hospedaje-Ruby/Index_pagina/panel_control.html';
         } catch (error) {
             console.error(error);
             if (err) { err.textContent = 'No se pudo conectar con la base de datos.'; err.style.display = 'block'; }
