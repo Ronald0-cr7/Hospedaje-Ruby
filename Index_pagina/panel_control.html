@@ -45,7 +45,7 @@
                 <a class="nav-link" href="inventario.html" data-modulo="inventario"><span>📦</span><span>Inventario</span></a>
                 <a class="nav-link" href="panel_estadistico.html" data-modulo="reportes"><span>📈</span><span>Reportes</span></a>
                 <a class="nav-link" href="proveedores_suministros.html" data-modulo="proveedores"><span>🚚</span><span>Proveedores</span></a>
-                <a class="nav-link logout-link" href="../Inicio_Sesion.html" id="btn-cerrar-sesion"><span>🚪</span><span>Cerrar sesión</span></a>
+                <a class="nav-link logout-link" href="../index.html" id="btn-cerrar-sesion"><span>🚪</span><span>Cerrar sesión</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -111,7 +111,7 @@
     <script>
     // Verificar sesión
     const sesion = JSON.parse(localStorage.getItem('sesion_usuario') || 'null');
-    if (!sesion) { window.location.href = '../Inicio_Sesion.html'; }
+    if (!sesion) { window.location.href = '../index.html'; }
 
     const iconosRol = { administrador:'👑', supervisor:'🔑', recepcionista:'🛎️', limpieza:'🧹' };
     const nombresRol = { administrador:'Administrador', supervisor:'Supervisor', recepcionista:'Recepcionista', limpieza:'Limpieza' };
@@ -138,7 +138,7 @@
     document.getElementById('btn-cerrar-sesion').addEventListener('click', function(e) {
         e.preventDefault();
         localStorage.removeItem('sesion_usuario');
-        window.location.href = '../Inicio_Sesion.html';
+        window.location.href = '../index.html';
     });
 
     // Métricas rápidas
