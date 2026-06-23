@@ -1,0 +1,249 @@
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+    --bg:#eef4fb;--card:rgba(255,255,255,0.97);--primary:#214abb;--primary-2:#2c7be5;
+    --text:#15314d;--muted:#5d7187;--border:#dbe6f1;--shadow:0 4px 20px rgba(18,50,79,0.10);
+    --success:#16a34a;--warning:#d97706;--danger:#dc2626;
+}
+
+body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+    background:radial-gradient(circle at top left,rgba(33,74,187,0.08),transparent 28%),
+               linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%);color:var(--text);padding-bottom:40px;}
+
+/* ── BOTÓN VOLVER ── */
+body>button:first-of-type{display:inline-flex;align-items:center;gap:6px;margin:20px 0 0 20px;padding:9px 20px;
+    border:none;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+    color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(33,74,187,0.25);transition:transform .2s,filter .2s;}
+body>button:first-of-type:hover{transform:translateY(-2px);filter:brightness(1.05)}
+
+/* ── CONTENEDORES ── */
+.encabezado,.registro-horizontal,.tabla-reservas{width:min(1280px,calc(100% - 32px));margin-left:auto;margin-right:auto;}
+
+/* ── ENCABEZADO ── */
+.encabezado{text-align:center;padding:28px 0 4px;}
+.encabezado h1{color:#123b63;font-size:clamp(1.4rem,3vw,2.2rem);font-weight:800;letter-spacing:-.03em;margin-bottom:8px;}
+.encabezado p{color:var(--muted);font-size:.9rem;}
+
+/* ── GRID FORMULARIO ── */
+.registro-horizontal{margin:20px auto;display:grid;grid-template-columns:1fr 1.5fr;gap:18px;align-items:start;}
+
+.seccion-imagen,.seccion-formulario{background:var(--card);border:1px solid rgba(33,74,187,0.08);
+    border-radius:18px;box-shadow:var(--shadow);padding:22px;}
+
+.seccion-imagen h2,.seccion-formulario h2{color:#123b63;font-size:1.05rem;font-weight:700;margin-bottom:10px;
+    display:flex;align-items:center;gap:8px;}
+.seccion-imagen p{color:var(--muted);font-size:.83rem;margin-bottom:12px;}
+.inventario-image{width:100%;height:auto;border-radius:14px;object-fit:cover;}
+
+/* ── FORMULARIO ── */
+form.habitacion{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+form.habitacion>div{display:flex;flex-direction:column;gap:4px;}
+form.habitacion>div:first-child,
+form.habitacion>div:last-child,
+form.habitacion>button{grid-column:1/-1;}
+
+form.habitacion label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+form.habitacion input,form.habitacion select{padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;
+    font-size:.88rem;color:var(--text);outline:none;transition:.2s;background:#fff;}
+form.habitacion input:focus,form.habitacion select:focus{border-color:var(--primary-2);box-shadow:0 0 0 3px rgba(44,123,229,.12);}
+form.habitacion input[readonly]{background:#f1f5fb;color:var(--muted);}
+
+form.habitacion button[type=submit]{padding:11px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+    color:#fff;border:none;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;
+    box-shadow:0 4px 14px rgba(33,74,187,0.28);transition:.2s;margin-top:4px;}
+form.habitacion button[type=submit]:hover{transform:translateY(-2px);filter:brightness(1.06);}
+
+/* ── TABLA ── */
+.tabla-reservas{margin-top:24px;}
+.tabla-reservas h2{color:#123b63;font-size:1.1rem;font-weight:700;margin-bottom:14px;}
+
+.filtros-fecha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);
+    padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--border);}
+.filtros-fecha label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.filtros-fecha input{padding:8px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.85rem;outline:none;}
+.filtros-fecha button{padding:8px 16px;border:none;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;transition:.2s;}
+#filtrar-fechas-btn{background:var(--primary);color:#fff;}
+#filtrar-fechas-btn:hover{background:var(--primary-2);}
+#mostrar-todas-btn{background:#e2eaf7;color:var(--primary);}
+
+#export-reservas-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#16a34a;
+    color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;
+    box-shadow:0 3px 10px rgba(22,163,74,.3);transition:.2s;margin-bottom:12px;}
+#export-reservas-btn:hover{transform:translateY(-2px);filter:brightness(1.05);}
+
+.tabla-overflow{overflow-x:auto;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);}
+
+#inventory-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+#inventory-table thead tr{background:linear-gradient(135deg,var(--primary),var(--primary-2));}
+#inventory-table th{color:#fff;padding:11px 10px;font-weight:600;text-align:left;white-space:nowrap;}
+#inventory-table td{padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+#inventory-table tbody tr:hover{background:rgba(33,74,187,0.04);}
+#inventory-table tbody tr:last-child td{border-bottom:none;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:700;white-space:nowrap;}
+.badge-disponible{background:#d1fae5;color:#065f46;}
+.badge-ocupada{background:#fef3c7;color:#92400e;}
+.badge-limpieza{background:#dbeafe;color:#1e40af;}
+.badge-reservada{background:#f3e8ff;color:#7e22ce;}
+.badge-mantenimiento{background:#fee2e2;color:#991b1b;}
+
+/* ── BOTONES ACCIONES ── */
+.btn-editar,.btn-eliminar{padding:5px 10px;border:none;border-radius:7px;font-size:.75rem;font-weight:600;cursor:pointer;transition:.15s;}
+.btn-editar{background:#e0e7ff;color:#3730a3;}
+.btn-editar:hover{background:#c7d2fe;}
+.btn-eliminar{background:#fee2e2;color:#991b1b;margin-left:4px;}
+.btn-eliminar:hover{background:#fecaca;}
+
+@media(max-width:768px){
+    .registro-horizontal{grid-template-columns:1fr;}
+    form.habitacion{grid-template-columns:1fr;}
+    form.habitacion>div:first-child{grid-column:1;}
+}
+/* ==========================================
+   MODO OSCURO - RESERVAS
+========================================== */
+
+body[data-theme="oscuro"]{
+    --bg:#0b1220;
+    --card:#111827;
+    --text:#e6edf7;
+    --muted:#9fb0c5;
+    --border:#243244;
+
+    background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(16,185,129,0.10), transparent 24%),
+        linear-gradient(180deg, #0b1220 0%, #111827 100%);
+
+    color:var(--text);
+}
+
+/* Tarjetas */
+body[data-theme="oscuro"] .seccion-imagen,
+body[data-theme="oscuro"] .seccion-formulario,
+body[data-theme="oscuro"] .filtros-fecha,
+body[data-theme="oscuro"] .tabla-overflow{
+    background:#111827;
+    border-color:#243244;
+}
+
+/* Títulos */
+body[data-theme="oscuro"] h1,
+body[data-theme="oscuro"] h2,
+body[data-theme="oscuro"] label{
+    color:#f8fbff;
+}
+
+/* Textos */
+body[data-theme="oscuro"] p,
+body[data-theme="oscuro"] .encabezado p{
+    color:#b8c7da;
+}
+
+/* Inputs */
+body[data-theme="oscuro"] input,
+body[data-theme="oscuro"] select{
+    background:#0f172a;
+    color:#f8fbff;
+    border-color:#334155;
+}
+
+body[data-theme="oscuro"] input[readonly]{
+    background:#1e293b;
+    color:#cbd5e1;
+}
+
+body[data-theme="oscuro"] input:focus,
+body[data-theme="oscuro"] select:focus{
+    border-color:#60a5fa;
+    box-shadow:0 0 0 3px rgba(96,165,250,.15);
+}
+
+/* Tabla */
+body[data-theme="oscuro"] #inventory-table{
+    background:#111827;
+}
+
+body[data-theme="oscuro"] #inventory-table thead tr{
+    background:#0f172a;
+}
+
+body[data-theme="oscuro"] #inventory-table th{
+    background:#0f172a;
+    color:#93c5fd;
+}
+
+body[data-theme="oscuro"] #inventory-table td{
+    color:#e6edf7;
+    border-bottom:1px solid #243244;
+}
+
+body[data-theme="oscuro"] #inventory-table tbody tr{
+    background:#111827;
+}
+
+body[data-theme="oscuro"] #inventory-table tbody tr:nth-child(even){
+    background:#0f172a;
+}
+
+body[data-theme="oscuro"] #inventory-table tbody tr:hover{
+    background:#1e293b;
+}
+
+/* Filtros */
+body[data-theme="oscuro"] .filtros-fecha label{
+    color:#cbd5e1;
+}
+
+/* Botón mostrar todas */
+body[data-theme="oscuro"] #mostrar-todas-btn{
+    background:#1e293b;
+    color:#cbd5e1;
+}
+
+/* Editar */
+body[data-theme="oscuro"] .btn-editar{
+    background:#1e40af;
+    color:#ffffff;
+}
+
+body[data-theme="oscuro"] .btn-editar:hover{
+    background:#2563eb;
+}
+
+/* Eliminar */
+body[data-theme="oscuro"] .btn-eliminar{
+    background:#7f1d1d;
+    color:#fecaca;
+}
+
+body[data-theme="oscuro"] .btn-eliminar:hover{
+    background:#991b1b;
+}
+
+/* Badges */
+body[data-theme="oscuro"] .badge-disponible{
+    background:#163524;
+    color:#6ee7b7;
+}
+
+body[data-theme="oscuro"] .badge-ocupada{
+    background:#4a3415;
+    color:#fcd34d;
+}
+
+body[data-theme="oscuro"] .badge-limpieza{
+    background:#172554;
+    color:#93c5fd;
+}
+
+body[data-theme="oscuro"] .badge-reservada{
+    background:#3b0764;
+    color:#d8b4fe;
+}
+
+body[data-theme="oscuro"] .badge-mantenimiento{
+    background:#4a1717;
+    color:#fca5a5;
+}

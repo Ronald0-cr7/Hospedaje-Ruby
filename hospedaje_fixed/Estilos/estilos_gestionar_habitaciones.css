@@ -1,0 +1,150 @@
+*{box-sizing:border-box}
+
+:root{
+	--bg-1:#f7fbff;
+	--bg-2:#edf3fa;
+	--card:#ffffff;
+	--text:#12324f;
+	--muted:#5f7288;
+	--primary:#214abb;
+	--primary-2:#2c7be5;
+	--success:#0b7a6f;
+	--warning:#d97706;
+	--danger:#dc3545;
+	--shadow:0 18px 40px rgba(18,50,79,0.14);
+}
+
+body{
+	margin:0;
+	min-height:100vh;
+	font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	background:
+		radial-gradient(circle at top left, rgba(33,74,187,0.16), transparent 30%),
+		radial-gradient(circle at bottom right, rgba(24,160,119,0.12), transparent 26%),
+		linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+	color:var(--text);
+	padding:40px 20px;
+	overflow-x:hidden;
+}
+
+.contenedor-principal{max-width:1600px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.header-habitaciones{grid-column:1 / -1;text-align:center;margin-bottom:8px}
+.header-habitaciones h1{margin:0 0 10px;font-size:clamp(2.2rem,4vw,3.4rem);font-weight:800;color:#133459;letter-spacing:-0.03em}
+.header-habitaciones p{margin:0;color:var(--muted);font-size:1.05rem}
+
+.grid-habitaciones{display:grid;grid-template-columns:repeat(auto-fill, minmax(180px,1fr));gap:18px}
+.tarjeta-habitacion{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:24px 16px;border:1px solid rgba(33,74,187,0.08);box-shadow:var(--shadow);transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;text-align:center;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:12px}
+.tarjeta-habitacion::before{content:'';position:absolute;inset:0 auto auto 0;height:4px;width:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2));opacity:0;transition:opacity .25s ease}
+.tarjeta-habitacion:hover{transform:translateY(-8px);box-shadow:0 22px 44px rgba(18,50,79,0.16);border-color:rgba(33,74,187,0.14)}
+.tarjeta-habitacion:hover::before{opacity:1}
+.numero-habitacion{font-size:2.1rem;font-weight:800;color:#214abb;line-height:1}
+.icono-cama{font-size:2.3rem;line-height:1}
+.tipo-habitacion{font-size:.9rem;color:var(--muted);font-weight:600}
+.estado-badge{display:inline-flex;align-items:center;gap:6px;width:100%;justify-content:center;padding:8px 14px;border-radius:999px;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.estado-disponible{background:linear-gradient(135deg,#0b7a6f 0%,#14b8a6 100%);color:#fff}
+.estado-ocupada{background:linear-gradient(135deg,#dc3545 0%,#b91c1c 100%);color:#fff}
+.estado-limpieza{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff}
+.estado-mantenimiento{background:linear-gradient(135deg,#6b7280 0%,#4b5563 100%);color:#fff}
+.punto-estado{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.panel-lateral{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:20px;padding:24px 20px;border:1px solid rgba(33,74,187,0.08);box-shadow:var(--shadow);position:sticky;top:24px;height:fit-content}
+.stats-container{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.stat-box{border-radius:16px;padding:14px 12px;background:linear-gradient(180deg,#ffffff 0%,#f5f8fc 100%);border:1px solid #e4edf7;text-align:center}
+.stat-numero{font-size:1.8rem;font-weight:800;color:#214abb;line-height:1}
+.stat-label{margin-top:4px;font-size:.9rem;color:var(--muted)}
+
+.panel-titulo{font-size:1.15rem;font-weight:800;color:#214abb;margin:0 0 18px;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.panel-titulo::before{content:'';width:4px;height:22px;background:linear-gradient(180deg,var(--primary),#163b63);border-radius:2px}
+.leyenda-estados{margin-bottom:24px}
+.item-leyenda{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px 12px;border-radius:14px;transition:background .2s ease,transform .2s ease}
+.item-leyenda:hover{background:rgba(33,74,187,0.05);transform:translateX(3px)}
+.indicador-estado{width:28px;height:28px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem;color:white}
+.indicador-disponible{background:linear-gradient(135deg,#0b7a6f 0%,#14b8a6 100%)}
+.indicador-ocupada{background:linear-gradient(135deg,#dc3545 0%,#b91c1c 100%)}
+.indicador-limpieza{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%)}
+.indicador-mantenimiento{background:linear-gradient(135deg,#6b7280 0%,#4b5563 100%)}
+.texto-leyenda{font-size:.95rem;font-weight:600;color:#28415b}
+.numero-leyenda{margin-left:auto;font-size:.75rem;color:#4b647c;background:#f4f8fd;padding:4px 8px;border-radius:999px}
+
+.botones-panel{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.btn-panel{padding:14px 16px;border:none;border-radius:14px;font-size:.95rem;font-weight:800;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff}
+.btn-panel:hover{transform:translateY(-2px);filter:brightness(1.03)}
+.btn-nueva-reserva{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-2) 100%);box-shadow:0 10px 24px rgba(33,74,187,0.24)}
+.btn-checkout{background:linear-gradient(135deg,var(--success) 0%,#14b8a6 100%);box-shadow:0 10px 24px rgba(11,122,111,0.22)}
+.btn-volver{background:linear-gradient(135deg,#6b7280 0%,#4b5563 100%);box-shadow:0 10px 24px rgba(107,114,128,0.22)}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.62);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.activo{display:flex}
+.modal-contenido{background:rgba(255,255,255,0.96);border-radius:24px;padding:30px;max-width:520px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.24);border:1px solid rgba(33,74,187,0.08)}
+.modal-titulo{font-size:1.7rem;color:#123b63;margin:0 0 12px;text-align:center}
+.modal-opciones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}
+.btn-opcion{border:none;border-radius:16px;padding:18px 12px;cursor:pointer;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-2) 100%);box-shadow:0 8px 24px rgba(33,74,187,0.24);transition:transform .2s ease,box-shadow .2s ease;display:flex;flex-direction:column;align-items:center;gap:8px}
+.btn-opcion:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(33,74,187,0.30)}
+.opcion-icono{font-size:1.4rem}
+.btn-cerrar-modal{width:100%;margin-top:10px;background:linear-gradient(135deg,#dc3545 0%,#b91c1c 100%);color:#fff}
+
+body[data-theme="oscuro"]{
+	--bg-1:#0b1220;
+	--bg-2:#111827;
+	--card:#121c2d;
+	--text:#e6edf7;
+	--muted:#9fb0c5;
+	background:
+		radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 30%),
+		radial-gradient(circle at bottom right, rgba(16,185,129,0.10), transparent 24%),
+		linear-gradient(180deg, #0b1220 0%, #111827 100%);
+	color:var(--text);
+}
+body[data-theme="oscuro"] .panel-lateral,
+body[data-theme="oscuro"] .tarjeta-habitacion,
+body[data-theme="oscuro"] .stat-box,
+body[data-theme="oscuro"] .modal-contenido{background:rgba(17,24,39,0.92);border-color:rgba(148,163,184,0.12)}
+body[data-theme="oscuro"] .header-habitaciones h1,
+body[data-theme="oscuro"] .panel-titulo,
+body[data-theme="oscuro"] .numero-habitacion,
+body[data-theme="oscuro"] .stat-numero,
+body[data-theme="oscuro"] .modal-titulo{color:#f8fbff}
+body[data-theme="oscuro"] .header-habitaciones p,
+body[data-theme="oscuro"] .tipo-habitacion,
+body[data-theme="oscuro"] .stat-label,
+body[data-theme="oscuro"] .texto-leyenda,
+body[data-theme="oscuro"] .numero-leyenda{color:#b8c7da}
+body[data-theme="oscuro"] .item-leyenda:hover{background:rgba(59,130,246,0.10)}
+body[data-theme="oscuro"] .btn-volver{background:linear-gradient(135deg,#374151 0%,#1f2937 100%)}
+
+@media (max-width:1200px){
+	.contenedor-principal{grid-template-columns:1fr}
+	.panel-lateral{position:static;order:-1;max-width:700px;margin:0 auto 12px}
+}
+
+@media (max-width:768px){
+	body{padding:16px}
+	.grid-habitaciones{grid-template-columns:repeat(auto-fill, minmax(150px,1fr))}
+	.modal-opciones{grid-template-columns:1fr}
+	.modal-contenido{padding:22px}
+	.stats-container{grid-template-columns:1fr 1fr}
+}
+
+@media (max-width:480px){
+	.grid-habitaciones{grid-template-columns:1fr 1fr}
+	.tarjeta-habitacion{padding:18px 12px}
+	.numero-habitacion{font-size:1.7rem}
+	.icono-cama{font-size:2rem}
+	.stats-container{grid-template-columns:1fr}
+}
+/* ── CONTADOR TIMER ── */
+.contador-timer {
+    font-size:.72rem; font-weight:700; color:#1e40af;
+    background:#dbeafe; border-radius:8px; padding:3px 8px;
+    margin-top:4px; letter-spacing:.05em; font-family:monospace;
+}
+.cliente-info {
+    font-size:.7rem; color:#64748b; margin-top:3px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    max-width:100%;
+}
+.btn-opcion.activo {
+    background:linear-gradient(135deg,#1e40af,#3b82f6);
+    color:#fff; border-color:#1e40af;
+}

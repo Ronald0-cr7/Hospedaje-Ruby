@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes</title>
+    <link rel="stylesheet" href="../Estilos/estilos_clientes.css">
+</head>
+<body>
+    <header class="cabecera">
+        <div>
+            <h1>Gestión de Clientes</h1>
+            <p>Registro, búsqueda e historial de clientes del hospedaje.</p>
+        </div>
+        <button type="button" onclick="window.location.href='panel_control.html'">Volver al Panel</button>
+    </header>
+
+    <section class="resumen">
+        <article class="tarjeta"><span id="total-clientes">0</span><small>Clientes registrados</small></article>
+        <article class="tarjeta"><span id="clientes-con-ventas">0</span><small>Clientes con actividad</small></article>
+        <article class="tarjeta"><span id="ingreso-total-clientes">S/ 0.00</span><small>Total facturado ventas</small></article>
+        <article class="tarjeta"><span id="ingreso-total-reservas">S/ 0.00</span><small>Total en reservas</small></article>
+    </section>
+
+    <section class="contenido">
+        <div class="panel-formulario">
+            <h2>Registrar cliente</h2>
+            <form id="cliente-form">
+                <label for="id-cliente">ID cliente</label>
+                <input type="text" id="id-cliente" required>
+
+                <label for="apellidos-nombres">Apellidos y nombres</label>
+                <input type="text" id="apellidos-nombres" required>
+
+                <label for="fecha-nacimiento">Fecha de nacimiento</label>
+                <input type="date" id="fecha-nacimiento" required>
+
+                <label for="dni-cliente">DNI</label>
+                <input type="text" id="dni-cliente" required>
+
+                <label for="distrito-ciudad">Distrito / ciudad</label>
+                <input type="text" id="distrito-ciudad" required>
+
+                <label for="telefono-cliente">Teléfono</label>
+                <input type="tel" id="telefono-cliente" required>
+
+                <div class="acciones-formulario">
+                    <button type="submit" id="guardar-cliente">Guardar cliente</button>
+                    <button type="button" id="cancelar-edicion" class="secundario oculto">Cancelar edición</button>
+                </div>
+            </form>
+
+            <div class="resumen-metodos">
+                <h3>Ingresos por método de pago (Reservas)</h3>
+                <div id="metodos-pago-reservas" class="lista-metodos"></div>
+                <h3 style="margin-top:14px;">Ingresos por método de pago (Ventas)</h3>
+                <div id="metodos-pago-resumen" class="lista-metodos"></div>
+            </div>
+        </div>
+
+        <div class="panel-tabla">
+            <div class="barra-busqueda" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <input type="search" id="buscar-cliente" placeholder="Buscar por nombre, DNI o teléfono" style="flex:1;min-width:200px;">
+                <!-- REQUISITO 2: Botón Excel -->
+                <button type="button" id="btn-export-clientes" style="background:#1d7044;color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                    📊 Exportar Excel
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>DNI</th>
+                        <th>Distrito</th>
+                        <th>Teléfono</th>
+                        <th>Ventas / Reservas</th>
+                        <th>Total ventas</th>
+                        <th>Total reservas</th>
+                        <th>Consumo total</th>
+                        <th>Último método</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="clientes-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/rol_guard.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/clientes.js"></script>
+</body>
+</html>

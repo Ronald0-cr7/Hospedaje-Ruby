@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Inventario</title>
+    <link rel="stylesheet" href="../Estilos/estilos_inventario.css">
+</head>
+<body>
+      <button type="button" onclick="window.location.href='panel_control.html'">
+                Volver al Panel de Control
+            </button>
+    <section class="encabezado">
+        <h1>Gestor de Inventario</h1>
+        <p>Módulo de gestión de inventario del hospedaje Ruby.</p>
+    </section>
+
+    <section class="registro-horizontal">
+
+        <div class="seccion-imagen">
+            <h2>Registro de Inventario</h2>
+            <p>Registre y gestione los productos del inventario de su tienda en el hospedaje</p>
+            <img src="../imagenes/gestion_inventario.png"
+                 alt="Gestión de Inventario"
+                 class="inventario-image">
+        </div>
+
+        <div class="seccion-formulario">
+            <h2>Registrar nuevo producto</h2>
+
+            <form class="tienda">
+                <div>
+                    <label for="item-id">ID_Producto:</label>
+                    <input type="text" id="item-id" required>
+                </div>
+
+                <div>
+                    <label for="item-name">Nombre:</label>
+                    <input type="text" id="item-name" required>
+                </div>
+
+                <div>
+                    <label for="fecha_vencimiento">Fecha de Vencimiento:</label>
+                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
+                </div>
+
+                <div>
+                    <label for="item-quantity">Stock:</label>
+                    <input type="number" id="item-quantity" min="0" required>
+                </div>
+
+                <div>
+                    <label for="item-price">Precio de Venta (S/):</label>
+                    <input type="number" id="item-price" min="0" step="0.01" required>
+                </div>
+
+                <div>
+                    <label for="categoria">Categoría:</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                </div>
+
+                <button type="submit">Añadir Artículo</button>
+            </form>
+        </div>
+
+    </section>
+
+    <section class="tabla-inventario">
+        <h2>Tabla de Inventario actual</h2>
+
+        <div id="inventory-alert" class="inventory-alert" aria-live="polite"></div>
+
+        <table id="inventory-table">
+            <thead>
+                <tr>
+                    <th>ID_Producto</th>
+                    <th>Nombre</th>
+                    <th>Fecha de Vencimiento</th>
+                    <th>Estado</th>
+                    <th>Stock</th>
+                    <th>Precio de Venta (S/)</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="inventory-body"></tbody>
+        </table>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/rol_guard.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/inventario.js"></script>
+
+</body>
+</html>

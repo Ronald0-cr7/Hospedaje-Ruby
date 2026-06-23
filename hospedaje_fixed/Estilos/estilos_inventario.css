@@ -1,0 +1,290 @@
+*{box-sizing:border-box}
+
+:root{
+    --bg:#eef4fb;
+    --card:#ffffff;
+    --primary:#214abb;
+    --primary-2:#2c7be5;
+    --text:#15314d;
+    --muted:#5d7187;
+    --border:#dbe6f1;
+    --shadow:0 16px 36px rgba(18,50,79,0.12);
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-align:center;
+    background:
+        radial-gradient(circle at top left, rgba(33,74,187,0.10), transparent 28%),
+        linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
+    color:var(--text);
+    padding-bottom:32px;
+}
+
+.inventario-image{
+    width:100%;
+    max-width:1000px;
+    height:auto;
+    margin:30px auto 20px;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(33,74,187,0.08);
+}
+
+h1{
+    color:#123b63;
+    margin-top:44px;
+    font-size:clamp(2.2rem, 4vw, 3.4rem);
+    font-weight:800;
+    letter-spacing:-0.03em;
+}
+
+p{
+    color:var(--muted);
+    font-size:1rem;
+    line-height:1.6;
+}
+
+h2{
+    color:#123b63;
+    margin-top:15px;
+    font-size:clamp(1.5rem, 3vw, 2.4rem);
+}
+
+.tienda{
+    max-width:700px;
+    margin:30px auto;
+    padding:30px;
+    background-color:rgba(255,255,255,0.88);
+    box-shadow:var(--shadow);
+    border-radius:22px;
+    border:1px solid rgba(33,74,187,0.08);
+    backdrop-filter:blur(10px);
+}
+
+.tienda div{margin-bottom:15px}
+
+form label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:700;
+    color:#123b63;
+    text-align:left;
+    width:100%;
+}
+
+form input,
+form select{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    box-sizing:border-box;
+    background-color:#fff;
+    font-size:15px;
+    color:var(--text);
+}
+
+form input:focus,
+form select:focus{
+    outline:none;
+    border-color:#7ca6f2;
+    box-shadow:0 0 0 4px rgba(33,74,187,0.10);
+}
+
+button{
+    width:220px;
+    margin-top:20px;
+    padding:12px;
+    font-size:15px;
+    background:linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+    color:white;
+    border:0;
+    border-radius:14px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .2s ease, filter .2s ease;
+}
+
+button:hover{transform:translateY(-2px);filter:brightness(1.02)}
+
+table{
+    text-align:center;
+    width:85%;
+    border-collapse:collapse;
+    margin:30px auto 50px;
+    background-color:#ffffff;
+    box-shadow:var(--shadow);
+    border-radius:16px;
+    overflow:hidden;
+}
+
+th, td{
+    padding:12px 15px;
+    text-align:center;
+    border-bottom:1px solid #e5edf4;
+    font-size:15px;
+}
+
+th{
+    background:linear-gradient(135deg, #163b63 0%, #214abb 100%);
+    color:white;
+    font-weight:bold;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+tr:nth-child(even){background-color:#f7fbff}
+tr:hover{background-color:#eef6ff}
+
+td button{padding:6px 12px;font-size:14px;margin:2px;border-radius:8px;border:none;cursor:pointer;font-weight:bold;width:auto}
+td button:first-child{background:linear-gradient(135deg,#fbbf24 0%, #f59e0b 100%);color:#1f2937}
+td button:first-child:hover{background:linear-gradient(135deg,#f59e0b 0%, #d97706 100%)}
+td button:last-child{background:linear-gradient(135deg,#ef4444 0%, #dc2626 100%);color:#fff}
+td button:last-child:hover{background:linear-gradient(135deg,#dc2626 0%, #b91c1c 100%)}
+
+.encabezado{text-align:center;margin-top:30px}
+
+.registro-horizontal{
+    width:90%;
+    margin:30px auto;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:24px;
+    align-items:flex-start;
+}
+
+.seccion-imagen,
+.seccion-formulario{
+    min-width:280px;
+    text-align:center;
+    background:rgba(255,255,255,0.88);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(33,74,187,0.08);
+    border-radius:22px;
+    padding:22px;
+}
+
+.tabla-inventario{width:100%;margin-top:30px}
+
+.inventory-alert{
+    width:85%;
+    margin:10px auto 0;
+    min-height:24px;
+    font-weight:bold;
+    color:#12324f;
+}
+
+.inventory-alert.has-warning{
+    color:#b42318;
+    background-color:#fdecec;
+    border:1px solid #f5a3a3;
+    padding:12px 16px;
+    border-radius:14px;
+}
+
+.estado-badge{display:inline-block;min-width:92px;padding:6px 10px;border-radius:999px;font-weight:bold;letter-spacing:0.4px}
+.estado-vencido{color:#b42318;background-color:#fdecec}
+.estado-vigente{color:#116530;background-color:#e9f8ef}
+tr.producto-vencido{background-color:#fff1f1}
+tr.producto-vigente{background-color:#f1fff6}
+
+@media (max-width:980px){
+    .registro-horizontal{grid-template-columns:1fr}
+}
+
+@media (max-width:720px){
+    .registro-horizontal,.tabla-inventario{width:min(100% - 20px, 1180px)}
+    table{width:100%}
+    th,td{font-size:12px;padding:10px 8px}
+}
+
+body[data-theme="oscuro"]{
+    --bg:#0b1220;
+    --card:#121c2d;
+    --text:#e6edf7;
+    --muted:#9fb0c5;
+    --border:#243244;
+    background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(16,185,129,0.10), transparent 24%),
+        linear-gradient(180deg, #0b1220 0%, #111827 100%);
+    color:var(--text);
+}
+/* ==========================================
+   INVENTARIO - TABLA MODO OSCURO
+========================================== */
+
+body[data-theme="oscuro"] table{
+    background:#111827;
+    border:1px solid #243244;
+}
+
+body[data-theme="oscuro"] thead tr{
+    background:#0f172a;
+}
+
+body[data-theme="oscuro"] tbody tr{
+    background:#111827;
+}
+
+body[data-theme="oscuro"] tbody tr:nth-child(even){
+    background:#0f172a;
+}
+
+body[data-theme="oscuro"] tbody tr:hover{
+    background:#1e293b;
+}
+
+body[data-theme="oscuro"] td{
+    color:#f8fbff;
+    border-bottom:1px solid #243244;
+}
+
+body[data-theme="oscuro"] th{
+    background:#0f172a;
+    color:#93c5fd;
+}
+
+/* Productos vigentes */
+body[data-theme="oscuro"] tr.producto-vigente{
+    background:#0f172a;
+}
+
+/* Productos vencidos */
+body[data-theme="oscuro"] tr.producto-vencido{
+    background:#3b1212;
+}
+
+body[data-theme="oscuro"] tr.producto-vencido:hover{
+    background:#4a1717;
+}
+
+/* Badges */
+body[data-theme="oscuro"] .estado-vigente{
+    background:#163524;
+    color:#6ee7b7;
+}
+
+body[data-theme="oscuro"] .estado-vencido{
+    background:#4a1717;
+    color:#fca5a5;
+}
+body[data-theme="oscuro"] .tienda,
+body[data-theme="oscuro"] .seccion-imagen,
+body[data-theme="oscuro"] .seccion-formulario,
+body[data-theme="oscuro"] .tabla-inventario,
+body[data-theme="oscuro"] table{background:rgba(17,24,39,0.92);border-color:rgba(148,163,184,0.12)}
+body[data-theme="oscuro"] h1,
+body[data-theme="oscuro"] h2,
+body[data-theme="oscuro"] label{color:#f8fbff}
+body[data-theme="oscuro"] p,
+body[data-theme="oscuro"] .encabezado p,
+body[data-theme="oscuro"] .inventory-alert{color:#b8c7da}
+body[data-theme="oscuro"] form input,
+body[data-theme="oscuro"] form select{background:#111827;border-color:#334155;color:#f8fbff}
+body[data-theme="oscuro"] th{background:#111827;color:#dbe7f5}
+body[data-theme="oscuro"] td{color:#e6edf7;border-bottom-color:#243244}

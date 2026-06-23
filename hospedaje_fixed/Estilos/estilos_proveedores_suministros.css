@@ -1,0 +1,729 @@
+
+/* =========================================================
+   PROVEEDORES & SUMINISTROS
+   HOSPEDAJE RUBY - ESTILO PROFESIONAL ERP
+========================================================= */
+
+:root {
+
+    --primary: #214abb;
+    --primary-dark: #163891;
+    --secondary: #0f766e;
+
+    --bg: #edf4ff;
+    --card: #ffffff;
+
+    --text: #1e293b;
+    --text-light: #64748b;
+
+    --border: #dbe4f0;
+
+    --danger: #dc3545;
+    --warning: #f59e0b;
+
+    --shadow:
+        0 10px 25px rgba(0,0,0,0.06);
+
+    --radius: 18px;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf4ff 0%,
+            #dfefff 100%
+        );
+
+    font-family:
+        'Segoe UI',
+        Tahoma,
+        Geneva,
+        Verdana,
+        sans-serif;
+
+    color:var(--text);
+
+    min-height:100vh;
+
+    padding-bottom:60px;
+}
+
+/* =========================================================
+   BOTÓN VOLVER
+========================================================= */
+
+.btn-volver{
+
+    margin:25px;
+
+    padding:14px 26px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+
+    box-shadow:var(--shadow);
+}
+
+.btn-volver:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   ENCABEZADOS
+========================================================= */
+
+.encabezado{
+
+    text-align:center;
+
+    margin-top:20px;
+}
+
+h1{
+
+    font-size:42px;
+
+    color:#0f172a;
+
+    margin-bottom:10px;
+
+    font-weight:800;
+}
+
+h2{
+
+    font-size:26px;
+
+    color:var(--primary);
+
+    margin-bottom:14px;
+}
+
+p{
+
+    color:var(--text-light);
+
+    font-size:16px;
+
+    line-height:1.6;
+}
+
+/* =========================================================
+   CONTENEDOR FLEX
+========================================================= */
+
+.registro-horizontal{
+
+    width:92%;
+
+    margin:40px auto;
+
+    display:flex;
+
+    gap:30px;
+
+    align-items:stretch;
+
+    flex-wrap:wrap;
+}
+
+/* =========================================================
+   TARJETAS
+========================================================= */
+
+.seccion-imagen,
+.seccion-formulario{
+
+    flex:1;
+
+    min-width:320px;
+
+    background:var(--card);
+
+    border-radius:var(--radius);
+
+    padding:28px;
+
+    box-shadow:var(--shadow);
+
+    border:1px solid var(--border);
+}
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.modulo-image{
+
+    width:100%;
+
+    height:420px;
+
+    object-fit:cover;
+
+    border-radius:16px;
+
+    margin-top:20px;
+
+    transition:0.4s ease;
+}
+
+.modulo-image:hover{
+
+    transform:scale(1.01);
+}
+
+/* =========================================================
+   FORMULARIOS
+========================================================= */
+
+form.tienda{
+
+    margin-top:20px;
+}
+
+form.tienda div{
+
+    margin-bottom:18px;
+}
+
+form label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#0f172a;
+
+    font-weight:600;
+
+    text-align:left;
+}
+
+form input,
+form select{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    border:1px solid #cbd5e1;
+
+    background:#f8fbff;
+
+    font-size:15px;
+
+    transition:0.25s ease;
+}
+
+form input:focus,
+form select:focus{
+
+    outline:none;
+
+    border-color:var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(33,74,187,0.15);
+
+    background:white;
+}
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+button[type="submit"]{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:var(--primary);
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.3s ease;
+
+    margin-top:10px;
+}
+
+button[type="submit"]:hover{
+
+    background:var(--primary-dark);
+
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   MODO EDICIÓN
+========================================================= */
+
+button[type="submit"].modo-edicion{
+
+    background:var(--warning);
+}
+
+button[type="submit"].modo-edicion:hover{
+
+    background:#d97706;
+}
+
+/* =========================================================
+   DIVISOR
+========================================================= */
+
+.divisor{
+
+    width:90%;
+
+    margin:70px auto;
+
+    border:none;
+
+    border-top:2px dashed #bfd2ec;
+}
+
+/* =========================================================
+   TABLAS
+========================================================= */
+
+.tabla-seccion{
+
+    width:95%;
+
+    margin:0 auto 60px;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    overflow:hidden;
+
+    border-radius:18px;
+
+    background:white;
+
+    box-shadow:var(--shadow);
+}
+
+th{
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--primary),
+            #3b82f6
+        );
+
+    color:white;
+
+    font-size:14px;
+
+    padding:18px 14px;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.5px;
+}
+
+td{
+
+    padding:15px 12px;
+
+    border-bottom:1px solid #eef2f7;
+
+    font-size:14px;
+}
+
+tr:nth-child(even){
+
+    background:#f8fbff;
+}
+
+tr:hover{
+
+    background:#eaf2ff;
+}
+
+/* =========================================================
+   BOTONES TABLA
+========================================================= */
+
+td button{
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:8px 14px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.btn-editar{
+
+    background:#facc15;
+
+    color:#000;
+}
+
+.btn-editar:hover{
+
+    background:#eab308;
+}
+
+.btn-eliminar{
+
+    background:var(--danger);
+
+    color:white;
+}
+
+.btn-eliminar:hover{
+
+    background:#b91c1c;
+}
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.alerta{
+
+    display:none;
+
+    margin-top:12px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+    font-size:14px;
+
+    border:1px solid #fecaca;
+}
+
+.alerta.visible{
+
+    display:block;
+}
+
+/* =========================================================
+   TABLA VACÍA
+========================================================= */
+
+.fila-vacia td{
+
+    padding:25px;
+
+    color:#64748b;
+
+    font-style:italic;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+    .registro-horizontal{
+
+        flex-direction:column;
+    }
+
+    h1{
+
+        font-size:32px;
+    }
+
+    h2{
+
+        font-size:22px;
+    }
+
+    .modulo-image{
+
+        height:auto;
+    }
+}
+
+@media(max-width:600px){
+
+    body{
+
+        overflow-x:hidden;
+    }
+
+    table{
+
+        display:block;
+
+        overflow-x:auto;
+    }
+
+    .btn-volver{
+
+        width:90%;
+    }
+
+    button[type="submit"]{
+
+        font-size:15px;
+    }
+}
+
+
+/* ============================================================
+   LAYOUT DOS COLUMNAS — PROVEEDORES (IZQ) | SUMINISTROS (DER)
+============================================================ */
+
+.layout-dos-columnas {
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    gap: 0 28px;
+    width: 96%;
+    max-width: 1400px;
+    margin: 30px auto 60px;
+    align-items: start;
+}
+
+/* ── Divisor vertical ──────────────────────────────────────── */
+.divisor-vertical {
+    width: 2px;
+    background: linear-gradient(180deg, transparent, #bfd2ec 20%, #bfd2ec 80%, transparent);
+    min-height: 100%;
+    align-self: stretch;
+}
+
+/* ── Columnas ──────────────────────────────────────────────── */
+.columna {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Header de columna ─────────────────────────────────────── */
+.columna-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+.columna-izquierda .columna-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+}
+.columna-derecha .columna-header {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+}
+.columna-icono {
+    font-size: 2.2rem;
+    line-height: 1;
+}
+.columna-titulo {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 4px 0;
+}
+.columna-subtitulo {
+    font-size: 13px;
+    color: rgba(255,255,255,.8);
+    margin: 0;
+}
+
+/* ── Cards internas ────────────────────────────────────────── */
+.card-imagen,
+.card-formulario,
+.card-tabla {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.card-formulario h3,
+.card-tabla h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0 0 16px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-light, #dbeafe);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.columna-derecha .card-formulario h3,
+.columna-derecha .card-tabla h3 {
+    color: var(--secondary);
+    border-bottom-color: #99f6e4;
+}
+
+.card-imagen .modulo-image {
+    height: 220px;
+    margin-top: 0;
+}
+
+/* ── Tabla overflow ────────────────────────────────────────── */
+.tabla-overflow {
+    overflow-x: auto;
+    border-radius: 12px;
+}
+.card-tabla table {
+    min-width: 520px;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .layout-dos-columnas {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    .divisor-vertical { display: none; }
+    .columna-izquierda { order: 1; }
+    .columna-derecha   { order: 2; }
+}
+
+/* =========================================================
+   MODO OSCURO — data-theme="oscuro"
+========================================================= */
+
+[data-theme="oscuro"] body,
+body[data-theme="oscuro"] {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+}
+
+body[data-theme="oscuro"] {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+}
+
+body[data-theme="oscuro"] .encabezado {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+body[data-theme="oscuro"] .card-imagen,
+body[data-theme="oscuro"] .card-formulario,
+body[data-theme="oscuro"] .card-tabla {
+    background: rgba(17, 24, 39, 0.92);
+    border-color: rgba(148, 163, 184, 0.15);
+    color: #e2e8f0;
+}
+
+body[data-theme="oscuro"] .card-formulario h3,
+body[data-theme="oscuro"] .card-tabla h3 {
+    color: #93c5fd;
+    border-bottom-color: rgba(147, 197, 253, 0.25);
+}
+
+body[data-theme="oscuro"] .columna-derecha .card-formulario h3,
+body[data-theme="oscuro"] .columna-derecha .card-tabla h3 {
+    color: #5eead4;
+    border-bottom-color: rgba(94, 234, 212, 0.25);
+}
+
+body[data-theme="oscuro"] label {
+    color: #94a3b8;
+}
+
+body[data-theme="oscuro"] input,
+body[data-theme="oscuro"] select,
+body[data-theme="oscuro"] textarea {
+    background: #1e293b;
+    border-color: rgba(148, 163, 184, 0.25);
+    color: #e2e8f0;
+}
+
+body[data-theme="oscuro"] input:focus,
+body[data-theme="oscuro"] select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+body[data-theme="oscuro"] table {
+    background: rgba(17, 24, 39, 0.92);
+    color: #e2e8f0;
+}
+
+body[data-theme="oscuro"] th {
+    background: rgba(30, 58, 138, 0.85);
+    color: #e0f2fe;
+    border-color: rgba(148, 163, 184, 0.15);
+}
+
+body[data-theme="oscuro"] td {
+    border-color: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+}
+
+body[data-theme="oscuro"] tbody tr:hover {
+    background: rgba(59, 130, 246, 0.10);
+}
+
+body[data-theme="oscuro"] .fila-vacia td {
+    color: #64748b;
+}
+
+body[data-theme="oscuro"] .divisor-vertical {
+    background: linear-gradient(180deg, transparent, rgba(148,163,184,0.25) 20%, rgba(148,163,184,0.25) 80%, transparent);
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Ventas - Hospedaje Ruby</title>
+    <link rel="stylesheet" href="../Estilos/estilos_ventas.css">
+</head>
+<body>
+    <!-- ENCABEZADO -->
+    <header class="ventas-header">
+        <div class="ventas-header-content">
+            <div>
+                <button class="btn-volver" onclick="window.location.href='panel_control.html'">← Panel</button>
+                <h1>🛒 Gestión de Ventas</h1>
+                <p>Registro y control de ventas del Hospedaje Ruby</p>
+            </div>
+            <div class="ventas-kpis" id="ventas-kpis">
+                <div class="kpi-mini"><span id="kpi-total-ventas">S/ 0.00</span><small>Total ventas</small></div>
+                <div class="kpi-mini"><span id="kpi-n-ventas">0</span><small>Registros</small></div>
+                <div class="kpi-mini"><span id="kpi-hoy">S/ 0.00</span><small>Ventas hoy</small></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL: izquierda formulario, derecha resumen -->
+    <div class="ventas-layout">
+
+        <!-- ──────── COLUMNA IZQUIERDA: FORMULARIO ──────── -->
+        <div class="col-formulario">
+            <div class="card-form">
+                <h2>📝 Registrar nueva venta</h2>
+                <form id="venta-form" class="tienda">
+                    <div class="form-row-2">
+                        <div class="form-field">
+                            <label for="venta-id">ID_Venta</label>
+                            <input type="text" id="venta-id" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="venta-fecha">Fecha y hora</label>
+                            <input type="datetime-local" id="venta-fecha" required>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="venta-sin-cliente"> &nbsp;Registrar sin cliente
+                        </label>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-field">
+                            <label for="venta-cliente">Cliente</label>
+                            <select id="venta-cliente">
+                                <option value="">Seleccione un cliente</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="venta-metodo-pago">Método de pago</label>
+                            <select id="venta-metodo-pago" required>
+                                <option value="Efectivo">💵 Efectivo</option>
+                                <option value="Tarjeta">💳 Tarjeta</option>
+                                <option value="Transferencia">🏦 Transferencia</option>
+                                <option value="Yape/Plin">📱 Yape/Plin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="aviso-detalle">💡 Agrega productos al detalle antes de registrar la venta.</div>
+
+                    <div class="form-row-3">
+                        <div class="form-field">
+                            <label for="venta-producto">Producto</label>
+                            <select id="venta-producto">
+                                <option value="">Seleccione un producto</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label for="venta-cantidad">Cantidad</label>
+                            <input type="number" id="venta-cantidad" min="1" value="1" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="venta-precio">Precio unit. (S/)</label>
+                            <input type="number" id="venta-precio" min="0" step="0.01" readonly>
+                        </div>
+                    </div>
+
+                    <div class="botones-producto">
+                        <button type="button" id="agregar-detalle-btn" class="btn-agregar">＋ Agregar al detalle</button>
+                        <button type="button" id="cancelar-edicion-btn" class="btn-cancelar oculto">✕ Cancelar edición</button>
+                    </div>
+
+                    <!-- DETALLE -->
+                    <div class="detalle-venta-wrap">
+                        <h3>🧾 Detalle de venta</h3>
+                        <table class="detalle-venta-table">
+                            <thead>
+                                <tr><th>Producto</th><th>Cant.</th><th>P.Unit</th><th>Subtotal</th><th></th></tr>
+                            </thead>
+                            <tbody id="detalle-venta-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- TOTALES -->
+                    <div class="totales-venta">
+                        <div class="total-row"><span>Subtotal:</span><strong id="venta-subtotal-show">S/ 0.00</strong></div>
+                        <div class="total-row"><span>IGV (18%):</span><strong id="venta-igv-show">S/ 0.00</strong></div>
+                        <div class="total-row total-final"><span>TOTAL:</span><strong id="venta-total-show">S/ 0.00</strong></div>
+                    </div>
+                    <input type="hidden" id="venta-subtotal">
+                    <input type="hidden" id="venta-igv">
+                    <input type="hidden" id="venta-total">
+
+                    <button type="submit" class="btn-registrar">✅ Registrar Venta</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ──────── COLUMNA DERECHA: RESUMEN + IMAGEN ──────── -->
+        <div class="col-resumen">
+            <div class="card-resumen">
+                <h2>📊 Resumen de ventas</h2>
+                <div id="resumen-metodos-ventas" class="resumen-metodos"></div>
+            </div>
+            <div class="card-imagen">
+                <img src="../imagenes/gestion_ventas.png" alt="Ventas" class="ventas-image">
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA DE HISTORIAL -->
+    <section class="tabla-ventas-section">
+        <div class="tabla-header">
+            <h2>📋 Historial de Ventas</h2>
+            <button id="export-ventas-btn" class="btn-excel">📊 Exportar Excel</button>
+        </div>
+
+        <div class="filtro-ventas">
+            <div class="campo-filtro"><label>Desde</label><input type="date" id="fecha-inicio"></div>
+            <div class="campo-filtro"><label>Hasta</label><input type="date" id="fecha-fin"></div>
+            <div class="campo-filtro"><label>Método</label>
+                <select id="filtro-metodo">
+                    <option value="">Todos</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Transferencia">Transferencia</option>
+                    <option value="Yape/Plin">Yape/Plin</option>
+                </select>
+            </div>
+            <button type="button" id="btn-filtrar" class="btn-filtrar">🔎 Filtrar</button>
+            <button type="button" id="btn-limpiar" class="btn-limpiar">🔄 Mostrar Todo</button>
+        </div>
+
+        <div class="tabla-overflow">
+            <table id="ventas-table">
+                <thead>
+                    <tr>
+                        <th>ID_Venta</th><th>Fecha</th><th>Cliente</th><th>Método</th>
+                        <th>Productos</th><th>Subtotal</th><th>IGV</th><th>Total</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="ventas-body"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/rol_guard.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/ventas.js"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Estadístico</title>
+    <link rel="stylesheet" href="../Estilos/estilos_dashboard.css">
+    <style>
+        .acciones-reporte { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+        .btn-reporte { display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border:none; border-radius:12px; font-size:.88rem; font-weight:700; cursor:pointer; transition:.2s; }
+        .btn-pdf { background:linear-gradient(135deg,#dc2626,#ef4444); color:#fff; }
+        .btn-pdf:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(220,38,38,.35); }
+        .btn-excel { background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff; }
+        .btn-excel:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(22,163,74,.35); }
+        .metodo-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #e5e7eb; }
+        .metodo-row:last-child { border-bottom:none; }
+        .metodo-barra { height:6px; background:#3b82f6; border-radius:3px; margin-top:4px; transition:width .4s; }
+        .seccion-metodos { margin-top:8px; }
+    </style>
+</head>
+<body>
+    <main class="dashboard">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Hospedaje Ruby</p>
+                <h1>Dashboard estadístico</h1>
+                <p class="subtitulo">Controla ganancias de reservas, ventas, ocupación y comportamiento de clientes.</p>
+            </div>
+            <div class="hero-actions">
+                <button type="button" onclick="window.location.href='panel_control.html'">← Volver al panel</button>
+            </div>
+        </section>
+
+        <!-- REQUISITO 11: Botones PDF y Excel -->
+        <div class="acciones-reporte">
+            <button class="btn-reporte btn-pdf" id="btn-pdf-reporte">📄 Generar PDF de Reportes</button>
+            <button class="btn-reporte btn-excel" id="btn-excel-clientes">📊 Excel con Datos de Clientes</button>
+        </div>
+
+        <section class="kpis">
+            <article class="kpi accent-1"><span id="kpi-ingresos-reservas">S/ 0.00</span><small>Ingresos por reservas</small></article>
+            <article class="kpi accent-2"><span id="kpi-ingresos-ventas">S/ 0.00</span><small>Ingresos por ventas</small></article>
+            <article class="kpi accent-3"><span id="kpi-ingresos-total">S/ 0.00</span><small>Ingreso total</small></article>
+            <article class="kpi accent-4"><span id="kpi-clientes">0</span><small>Clientes registrados</small></article>
+        </section>
+
+        <section class="grid-principal">
+            <article class="panel panel-anchos">
+                <div class="panel-head"><h2>Ocupación de habitaciones</h2><p>Distribución actual por estado</p></div>
+                <div id="ocupacion-lista" class="lista-metricas"></div>
+            </article>
+            <article class="panel panel-anchos">
+                <div class="panel-head"><h2>Ingresos por método de pago</h2><p>Reservas y ventas agrupadas</p></div>
+                <div class="seccion-metodos">
+                    <strong style="color:#1e40af;font-size:.82rem;">🛏 RESERVAS</strong>
+                    <div id="metodos-reservas" class="lista-metricas"></div>
+                    <br>
+                    <strong style="color:#16a34a;font-size:.82rem;">🛒 VENTAS</strong>
+                    <div id="metodos-lista" class="lista-metricas"></div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-principal">
+            <article class="panel">
+                <div class="panel-head"><h2>Top productos vendidos</h2><p>Unidades vendidas en recepción</p></div>
+                <div id="top-productos" class="lista-metricas"></div>
+            </article>
+            <article class="panel">
+                <div class="panel-head"><h2>Clientes activos</h2><p>Clientes con reservas o compras</p></div>
+                <div id="clientes-activos" class="lista-metricas"></div>
+            </article>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/rol_guard.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/panel_estadistico.js"></script>
+    <script>
+    // REQUISITO 11: Generar PDF de reportes
+    document.getElementById('btn-pdf-reporte').addEventListener('click', () => {
+        const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+        const ventas = JSON.parse(localStorage.getItem('ventas') || '[]');
+        const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+        const estados = JSON.parse(localStorage.getItem('habitaciones_estados') || '{}');
+
+        const totalReservas = reservas.reduce((s, r) => s + Number(r.importeTotal || 0), 0);
+        const totalVentas = ventas.reduce((s, v) => s + Number(v.total || 0), 0);
+
+        const metPagoR = reservas.reduce((acc, r) => {
+            const m = r.metodoPago || 'No registrado';
+            acc[m] = (acc[m] || 0) + Number(r.importeTotal || 0);
+            return acc;
+        }, {});
+        const metPagoV = ventas.reduce((acc, v) => {
+            const m = v.metodoPago || 'Efectivo';
+            acc[m] = (acc[m] || 0) + Number(v.total || 0);
+            return acc;
+        }, {});
+        const conteoEstados = { Disponible:0, Ocupada:0, Limpieza:0, Mantenimiento:0 };
+        Object.values(estados).forEach(e => { if (conteoEstados[e] !== undefined) conteoEstados[e]++; });
+
+        const fecha = new Date().toLocaleString('es-PE');
+        const html = `
+        <html><head><meta charset="UTF-8"><style>
+        body{font-family:Arial,sans-serif;padding:30px;color:#1e293b;}
+        h1{color:#1e3a8a;border-bottom:3px solid #3b82f6;padding-bottom:8px;}
+        h2{color:#1e40af;margin-top:24px;font-size:1.1rem;}
+        .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0;}
+        .kpi{background:#eff6ff;border-radius:10px;padding:16px;text-align:center;}
+        .kpi span{display:block;font-size:1.4rem;font-weight:800;color:#1e40af;}
+        .kpi small{font-size:.8rem;color:#64748b;}
+        table{width:100%;border-collapse:collapse;margin-top:10px;}
+        th{background:#1e3a8a;color:#fff;padding:8px;text-align:left;font-size:.82rem;}
+        td{padding:7px 8px;border-bottom:1px solid #e2e8f0;font-size:.82rem;}
+        tr:nth-child(even){background:#f8fafc;}
+        .footer{margin-top:30px;text-align:center;color:#94a3b8;font-size:.75rem;border-top:1px solid #e2e8f0;padding-top:10px;}
+        </style></head><body>
+        <h1>🏨 Reporte General — Hospedaje Ruby</h1>
+        <p><strong>Generado:</strong> ${fecha}</p>
+
+        <div class="kpi-grid">
+            <div class="kpi"><span>S/ ${totalReservas.toFixed(2)}</span><small>Total Reservas</small></div>
+            <div class="kpi"><span>S/ ${totalVentas.toFixed(2)}</span><small>Total Ventas</small></div>
+            <div class="kpi"><span>S/ ${(totalReservas + totalVentas).toFixed(2)}</span><small>Ingreso Total</small></div>
+        </div>
+
+        <h2>📊 Ocupación de Habitaciones</h2>
+        <table><tr>${Object.keys(conteoEstados).map(e=>`<th>${e}</th>`).join('')}</tr>
+        <tr>${Object.values(conteoEstados).map(v=>`<td>${v}</td>`).join('')}</tr></table>
+
+        <h2>💳 Ingresos por Método de Pago — Reservas</h2>
+        <table><tr><th>Método</th><th>Total (S/)</th></tr>
+        ${Object.entries(metPagoR).map(([m,t])=>`<tr><td>${m}</td><td>S/ ${Number(t).toFixed(2)}</td></tr>`).join('')}
+        </table>
+
+        <h2>🛒 Ingresos por Método de Pago — Ventas</h2>
+        <table><tr><th>Método</th><th>Total (S/)</th></tr>
+        ${Object.entries(metPagoV).map(([m,t])=>`<tr><td>${m}</td><td>S/ ${Number(t).toFixed(2)}</td></tr>`).join('')}
+        </table>
+
+        <h2>🛏 Últimas Reservas (${Math.min(reservas.length,10)})</h2>
+        <table><tr><th>ID</th><th>Cliente</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Total</th><th>Método</th></tr>
+        ${reservas.slice(-10).map(r=>`<tr><td>${r.reservaId}</td><td>${r.clienteNombre}</td><td>${r.numeroHabitacion}</td><td>${new Date(r.fechaEntrada).toLocaleDateString('es-PE')}</td><td>${new Date(r.fechaSalida).toLocaleDateString('es-PE')}</td><td>S/ ${Number(r.importeTotal).toFixed(2)}</td><td>${r.metodoPago||'-'}</td></tr>`).join('')}
+        </table>
+
+        <div class="footer">Hospedaje Ruby — Sistema de Gestión © ${new Date().getFullYear()}</div>
+        </body></html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        setTimeout(() => win.print(), 500);
+    });
+
+    // REQUISITO 11: Excel con datos de clientes
+    document.getElementById('btn-excel-clientes').addEventListener('click', () => {
+        if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería Excel.'); return; }
+        const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+        const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+        const ventas = JSON.parse(localStorage.getItem('ventas') || '[]');
+
+        const filas = clientes.map(c => {
+            const r = reservas.filter(x => String(x.clienteId) === String(c.id_cliente));
+            const v = ventas.filter(x => String(x.clienteId) === String(c.id_cliente));
+            const tR = r.reduce((s, x) => s + Number(x.importeTotal || 0), 0);
+            const tV = v.reduce((s, x) => s + Number(x.total || 0), 0);
+            return {
+                ID: c.id_cliente, Nombre: c.apellidos_nombres, DNI: c.dni,
+                Distrito: c.distrito_ciudad, Telefono: c.telefono,
+                N_Reservas: r.length, Total_Reservas: tR.toFixed(2),
+                N_Ventas: v.length, Total_Ventas: tV.toFixed(2),
+                Consumo_Total: (tR + tV).toFixed(2)
+            };
+        });
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), 'Clientes');
+        XLSX.writeFile(wb, `clientes_reporte_${new Date().toISOString().slice(0,10)}.xlsx`);
+    });
+    </script>
+</body>
+</html>

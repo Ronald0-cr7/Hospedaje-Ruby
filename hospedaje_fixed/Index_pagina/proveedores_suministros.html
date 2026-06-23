@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveedores y Suministros - Hospedaje Ruby</title>
+    <link rel="stylesheet" href="../Estilos/estilos_proveedores_suministros.css">
+</head>
+<body>
+
+    <!-- Botón volver -->
+    <button type="button" class="btn-volver" onclick="window.location.href='panel_control.html'">
+        ← Volver al Panel de Control
+    </button>
+
+    <!-- ============================================================
+         ENCABEZADO GENERAL
+    ============================================================ -->
+    <section class="encabezado">
+        <h1>Proveedores &amp; Suministros</h1>
+        <p>Gestión integral de proveedores y suministros del Hospedaje Ruby.</p>
+    </section>
+
+    <!-- ============================================================
+         LAYOUT PRINCIPAL: DOS COLUMNAS
+         IZQUIERDA = PROVEEDORES  |  DERECHA = SUMINISTROS
+    ============================================================ -->
+    <div class="layout-dos-columnas">
+
+        <!-- ════════════════════════════════════════════
+             COLUMNA IZQUIERDA — PROVEEDORES
+        ════════════════════════════════════════════ -->
+        <div class="columna columna-izquierda">
+
+            <div class="columna-header">
+                <span class="columna-icono">🏭</span>
+                <div>
+                    <h2 class="columna-titulo">Proveedores</h2>
+                    <p class="columna-subtitulo">Registra y administra los proveedores del hospedaje.</p>
+                </div>
+            </div>
+
+            <!-- Imagen -->
+            <div class="card-imagen">
+                <img src="../imagenes/proveedores.png" alt="Gestión de Proveedores" class="modulo-image">
+            </div>
+
+            <!-- Formulario -->
+            <div class="card-formulario">
+                <h3>Registrar nuevo proveedor</h3>
+                <form id="form-proveedor" class="tienda">
+                    <div>
+                        <label for="prov-nombre">Nombre / Razón Social</label>
+                        <input type="text" id="prov-nombre" placeholder="Ej: Distribuidora Lima SAC" required>
+                    </div>
+                    <div>
+                        <label for="prov-ruc">RUC</label>
+                        <input type="text" id="prov-ruc" maxlength="11" placeholder="11 dígitos" required>
+                    </div>
+                    <div>
+                        <label for="prov-telefono">Teléfono</label>
+                        <input type="tel" id="prov-telefono" placeholder="Ej: 987654321">
+                    </div>
+                    <div>
+                        <label for="prov-email">Correo Electrónico</label>
+                        <input type="email" id="prov-email" placeholder="proveedor@correo.com">
+                    </div>
+                    <div>
+                        <label for="prov-direccion">Dirección</label>
+                        <input type="text" id="prov-direccion" placeholder="Av. Lima 123, SJM">
+                    </div>
+                    <button type="submit" id="btn-prov-submit">＋ Añadir Proveedor</button>
+                </form>
+            </div>
+
+            <!-- Tabla proveedores -->
+            <div class="card-tabla">
+                <h3>Proveedores registrados</h3>
+                <div class="tabla-overflow">
+                    <table id="tabla-proveedores">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre / Razón Social</th>
+                                <th>RUC</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Dirección</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="body-proveedores"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Divisor vertical -->
+        <div class="divisor-vertical"></div>
+
+        <!-- ════════════════════════════════════════════
+             COLUMNA DERECHA — SUMINISTROS
+        ════════════════════════════════════════════ -->
+        <div class="columna columna-derecha">
+
+            <div class="columna-header">
+                <span class="columna-icono">📦</span>
+                <div>
+                    <h2 class="columna-titulo">Suministros</h2>
+                    <p class="columna-subtitulo">Registra el ingreso de productos de los proveedores.</p>
+                </div>
+            </div>
+
+            <!-- Imagen -->
+            <div class="card-imagen">
+                <img src="../imagenes/suministros.png" alt="Gestión de Suministros" class="modulo-image">
+            </div>
+
+            <!-- Formulario -->
+            <div class="card-formulario">
+                <h3>Registrar nuevo suministro</h3>
+                <form id="form-suministro" class="tienda">
+                    <div>
+                        <label for="sum-proveedor">Proveedor</label>
+                        <select id="sum-proveedor" required>
+                            <option value="">-- Seleccione un proveedor --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sum-producto">Producto (del inventario)</label>
+                        <select id="sum-producto" required>
+                            <option value="">-- Seleccione un producto --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sum-fecha">Fecha de Suministro</label>
+                        <input type="date" id="sum-fecha" required>
+                    </div>
+                    <div>
+                        <label for="sum-cantidad">Cantidad recibida</label>
+                        <input type="number" id="sum-cantidad" min="1" placeholder="Unidades" required>
+                    </div>
+                    <div>
+                        <label for="sum-precio">Precio de Compra (S/)</label>
+                        <input type="number" id="sum-precio" min="0" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <button type="submit" id="btn-sum-submit">＋ Registrar Suministro</button>
+                </form>
+            </div>
+
+            <!-- Tabla suministros -->
+            <div class="card-tabla">
+                <h3>Suministros registrados</h3>
+                <div class="tabla-overflow">
+                    <table id="tabla-suministros">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proveedor</th>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Cantidad</th>
+                                <th>Precio (S/)</th>
+                                <th>Total (S/)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="body-suministros"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div><!-- /layout-dos-columnas -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/proveedores_suministros.js"></script>
+</body>
+</html>

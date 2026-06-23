@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Hospedaje Ruby</title>
+    <link rel="stylesheet" href="../Estilos/login.css">
+    <style>
+        .login-wrapper { min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%); }
+        .login-card { background:#fff; border-radius:20px; padding:40px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+        .login-logo { text-align:center; margin-bottom:28px; }
+        .login-logo .icon { font-size:3rem; }
+        .login-logo h1 { color:#1e3a8a; font-size:1.5rem; font-weight:800; margin-top:8px; }
+        .login-logo p { color:#64748b; font-size:.85rem; }
+        .form-group { margin-bottom:18px; }
+        .form-group label { display:block; font-size:.8rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:.05em; }
+        .form-group input, .form-group select { width:100%; padding:11px 14px; border:1.5px solid #e5e7eb; border-radius:10px; font-size:.9rem; outline:none; transition:.2s; box-sizing:border-box; }
+        .form-group input:focus, .form-group select:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+        .rol-info { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+        .rol-badge { padding:4px 10px; border-radius:20px; font-size:.72rem; font-weight:700; }
+        .rol-admin { background:#fef3c7; color:#92400e; }
+        .rol-supervisor { background:#dbeafe; color:#1e40af; }
+        .rol-recepcionista { background:#d1fae5; color:#065f46; }
+        .rol-limpieza { background:#fce7f3; color:#9d174d; }
+        .btn-login { width:100%; padding:13px; background:linear-gradient(135deg,#1e3a8a,#3b82f6); color:#fff; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; transition:.2s; margin-top:4px; }
+        .btn-login:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(59,130,246,.4); }
+        .cuentas-demo { background:#f8fafc; border-radius:12px; padding:14px; margin-top:16px; font-size:.78rem; color:#64748b; }
+        .cuentas-demo strong { color:#374151; display:block; margin-bottom:8px; }
+        .cuenta-row { display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #e5e7eb; }
+        .cuenta-row:last-child { border-bottom:none; }
+        #error-msg { color:#dc2626; font-size:.83rem; margin-top:8px; text-align:center; display:none; }
+    </style>
+</head>
+<body>
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="icon">🏨</div>
+            <h1>Hospedaje Ruby</h1>
+            <p>Sistema de Gestión Hotelera</p>
+        </div>
+
+        <div class="rol-info">
+            <span class="rol-badge rol-admin">👑 Admin</span>
+            <span class="rol-badge rol-supervisor">🔑 Supervisor</span>
+            <span class="rol-badge rol-recepcionista">🛎 Recepcionista</span>
+            <span class="rol-badge rol-limpieza">🧹 Limpieza</span>
+        </div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" id="login-usuario" placeholder="Ingresa tu usuario" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-password" placeholder="Ingresa tu contraseña" required>
+            </div>
+            <div id="error-msg">Usuario o contraseña incorrectos</div>
+            <button type="submit" class="btn-login">Ingresar al sistema</button>
+        </form>
+
+        <div class="cuentas-demo">
+            <strong>👤 Cuentas de acceso (tabla usuarios en Supabase):</strong>
+            <div class="cuenta-row"><span>admin / admin123</span><span class="rol-badge rol-admin">Admin</span></div>
+            <div class="cuenta-row"><span>recepcion / recepcion123</span><span class="rol-badge rol-recepcionista">Recepción</span></div>
+            <div class="cuenta-row"><span>limpieza / limpieza123</span><span class="rol-badge rol-limpieza">Limpieza</span></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../Interactividad_js/supabaseClient.js"></script>
+<script src="../Interactividad_js/login.js"></script>
+</body>
+</html>

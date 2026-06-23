@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Hospedaje Ruby</title>
+    <link rel="stylesheet" href="../Estilos/panel.css">
+    <style>
+        .rol-badge-top { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; font-size:.78rem; font-weight:700; }
+        .rol-administrador { background:#fef3c7; color:#92400e; }
+        .rol-supervisor { background:#dbeafe; color:#1e40af; }
+        .rol-recepcionista { background:#d1fae5; color:#065f46; }
+        .rol-limpieza { background:#fce7f3; color:#9d174d; }
+        .nav-link.disabled { opacity:.35; pointer-events:none; cursor:not-allowed; }
+        .usuario-info { display:flex; align-items:center; gap:10px; margin-bottom:10px; padding:10px 14px; background:rgba(255,255,255,.08); border-radius:12px; }
+        .usuario-nombre { font-size:.82rem; color:rgba(255,255,255,.9); font-weight:600; }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+            <div class="sidebar-brand">
+                <div class="brand-icon">🏨</div>
+                <div class="brand-text">
+                    <strong>Hospedaje Ruby</strong>
+                    <span>Panel administrativo</span>
+                </div>
+                <button type="button" class="sidebar-toggle" id="toggle-sidebar-btn" aria-label="Colapsar menú">☰</button>
+            </div>
+
+            <div class="usuario-info" id="usuario-info-bar">
+                <span id="usuario-icono">👤</span>
+                <div>
+                    <div class="usuario-nombre" id="usuario-nombre-bar">Cargando...</div>
+                    <div id="usuario-rol-bar" class="rol-badge-top" style="font-size:.68rem;padding:2px 8px;">---</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <a class="nav-link" href="panel_control.html" data-modulo="panel_control"><span>📊</span><span>Dashboard</span></a>
+                <a class="nav-link" href="reservas.html" data-modulo="reservas"><span>🗓️</span><span>Reservas</span></a>
+                <a class="nav-link" href="gestionar_habitaciones.html" data-modulo="habitaciones"><span>🛏️</span><span>Habitaciones</span></a>
+                <a class="nav-link" href="clientes.html" data-modulo="clientes"><span>👤</span><span>Clientes</span></a>
+                <a class="nav-link" href="ventas.html" data-modulo="ventas"><span>💳</span><span>Ventas</span></a>
+                <a class="nav-link" href="inventario.html" data-modulo="inventario"><span>📦</span><span>Inventario</span></a>
+                <a class="nav-link" href="panel_estadistico.html" data-modulo="reportes"><span>📈</span><span>Reportes</span></a>
+                <a class="nav-link" href="proveedores_suministros.html" data-modulo="proveedores"><span>🚚</span><span>Proveedores</span></a>
+                <a class="nav-link logout-link" href="Inicio_Sesion.html" id="btn-cerrar-sesion"><span>🚪</span><span>Cerrar sesión</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" class="theme-toggle" id="theme-toggle-btn">
+                    <span id="theme-toggle-icon">☀️</span>
+                    <span id="theme-toggle-label">Modo claro</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Gestión hotelera</p>
+                    <h1>Panel de Control</h1>
+                    <p class="topbar-subtitle">Administra reservas, habitaciones, clientes, ventas e inventario desde una sola vista.</p>
+                </div>
+                <div class="topbar-badges">
+                    <span class="badge" id="badge-rol">---</span>
+                    <span class="badge">Modo administrativo</span>
+                </div>
+            </header>
+
+            <section class="hero-grid">
+                <article class="hero-card hero-card-primary">
+                    <h2>Acceso rápido</h2>
+                    <p>Entra a los módulos más usados sin perder el contexto de trabajo.</p>
+                    <div class="hero-actions" id="hero-accesos">
+                        <a class="hero-action" href="reservas.html">Reservas</a>
+                        <a class="hero-action" href="ventas.html">Ventas</a>
+                        <a class="hero-action" href="clientes.html">Clientes</a>
+                        <a class="hero-action" href="panel_estadistico.html">Reportes</a>
+                    </div>
+                </article>
+                <article class="hero-card hero-card-image">
+                    <img src="../imagenes/panel_control.png" alt="Panel de Control" class="panel-control-image">
+                </article>
+            </section>
+
+            <section class="dashboard-cards">
+                <article class="panel-card"><span>📊</span><strong>Dashboard</strong><p>Analiza ingresos, ocupación y actividad reciente.</p></article>
+                <article class="panel-card"><span>🛏️</span><strong>Habitaciones</strong><p>Controla estados, ocupación y mantenimiento.</p></article>
+                <article class="panel-card"><span>🧾</span><strong>Ventas</strong><p>Registra cobros de recepción con detalle de productos.</p></article>
+                <article class="panel-card"><span>👥</span><strong>Clientes</strong><p>Centraliza datos de huéspedes y su historial.</p></article>
+            </section>
+
+            <section class="content-panel">
+                <div class="content-panel-head">
+                    <h2 id="active-section">Dashboard</h2>
+                    <p>Selecciona un módulo desde el menú lateral para trabajar con rapidez.</p>
+                </div>
+                <div class="metrics-grid">
+                    <article class="metric-box"><span id="met-habitaciones">15</span><small>Habitaciones activas</small></article>
+                    <article class="metric-box"><span id="met-reservas">0</span><small>Reservas registradas</small></article>
+                    <article class="metric-box"><span id="met-ventas">S/ 0</span><small>Total ventas</small></article>
+                    <article class="metric-box"><span id="met-clientes">0</span><small>Clientes registrados</small></article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../Interactividad_js/tema.js"></script>
+    <script>
+    // Verificar sesión
+    const sesion = JSON.parse(localStorage.getItem('sesion_usuario') || 'null');
+    if (!sesion) { window.location.href = 'Inicio_Sesion.html'; }
+
+    const iconosRol = { administrador:'👑', supervisor:'🔑', recepcionista:'🛎️', limpieza:'🧹' };
+    const nombresRol = { administrador:'Administrador', supervisor:'Supervisor', recepcionista:'Recepcionista', limpieza:'Limpieza' };
+
+    if (sesion) {
+        document.getElementById('usuario-nombre-bar').textContent = sesion.nombre;
+        const rolEl = document.getElementById('usuario-rol-bar');
+        rolEl.textContent = nombresRol[sesion.rol] || sesion.rol;
+        rolEl.className = `rol-badge-top rol-${sesion.rol}`;
+        document.getElementById('usuario-icono').textContent = iconosRol[sesion.rol] || '👤';
+        document.getElementById('badge-rol').textContent = `${iconosRol[sesion.rol]} ${nombresRol[sesion.rol]}`;
+
+        // Bloquear links sin acceso
+        document.querySelectorAll('#sidebar-nav .nav-link[data-modulo]').forEach(link => {
+            const mod = link.dataset.modulo;
+            if (mod && !sesion.acceso.includes(mod)) {
+                link.classList.add('disabled');
+                link.removeAttribute('href');
+            }
+        });
+    }
+
+    // Cerrar sesión
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('sesion_usuario');
+        window.location.href = 'Inicio_Sesion.html';
+    });
+
+    // Métricas rápidas
+    const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
+    const ventas = JSON.parse(localStorage.getItem('ventas') || '[]');
+    const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+    const totalVentas = ventas.reduce((s, v) => s + Number(v.total || 0), 0);
+    document.getElementById('met-reservas').textContent = reservas.length;
+    document.getElementById('met-ventas').textContent = `S/ ${totalVentas.toFixed(0)}`;
+    document.getElementById('met-clientes').textContent = clientes.length;
+    </script>
+    <script src="../Interactividad_js/panel_control.js"></script>
+</body>
+</html>
