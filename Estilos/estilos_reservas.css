@@ -57,6 +57,16 @@ form.habitacion button[type=submit]:hover{transform:translateY(-2px);filter:brig
 .tabla-reservas{margin-top:24px;}
 .tabla-reservas h2{color:#123b63;font-size:1.1rem;font-weight:700;margin-bottom:14px;}
 
+.card-resumen-reservas{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);}
+.card-resumen-reservas h3{font-size:.96rem;color:#123b63;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.resumen-metodos-reservas{display:flex;flex-direction:column;gap:8px;}
+.metodo-item-reserva{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#f8fafc;border-radius:10px;border:1px solid var(--border);}
+.metodo-item-reserva strong{font-size:.84rem;color:var(--text);}
+.metodo-item-reserva span{font-size:.88rem;font-weight:800;color:var(--success);}
+.total-resumen-reservas{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px dashed var(--border);}
+.total-resumen-reservas span{font-size:.82rem;color:var(--muted);font-weight:700;}
+.total-resumen-reservas strong{font-size:1.02rem;color:#065f46;}
+
 .filtros-fecha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);
     padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--border);}
 .filtros-fecha label{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
@@ -123,10 +133,18 @@ body[data-theme="oscuro"]{
 body[data-theme="oscuro"] .seccion-imagen,
 body[data-theme="oscuro"] .seccion-formulario,
 body[data-theme="oscuro"] .filtros-fecha,
-body[data-theme="oscuro"] .tabla-overflow{
+body[data-theme="oscuro"] .tabla-overflow,
+body[data-theme="oscuro"] .card-resumen-reservas{
     background:#111827;
     border-color:#243244;
 }
+
+body[data-theme="oscuro"] .card-resumen-reservas h3{color:#93c5fd;border-bottom-color:#243244;}
+body[data-theme="oscuro"] .metodo-item-reserva{background:#1e293b;border-color:#334155;}
+body[data-theme="oscuro"] .metodo-item-reserva strong{color:#e2e8f0;}
+body[data-theme="oscuro"] .metodo-item-reserva span{color:#22c55e;}
+body[data-theme="oscuro"] .total-resumen-reservas span{color:#cbd5e1;}
+body[data-theme="oscuro"] .total-resumen-reservas strong{color:#86efac;}
 
 /* Títulos */
 body[data-theme="oscuro"] h1,

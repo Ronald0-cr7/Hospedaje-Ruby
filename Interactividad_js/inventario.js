@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         productos.forEach((producto) => {
             const estado = obtenerEstado(producto.fecha_vencimiento);
+            const estadoStock = obtenerEstadoStock(producto.cantidad);
             const vencido = estado === 'VENCIDO';
             if (vencido) productosVencidos += 1;
 
@@ -134,6 +135,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </td>
                 <td>${producto.cantidad}</td>
+                <td>
+                    <span class="estado-badge-stock ${estadoStock.clase}">
+                        ${estadoStock.texto}
+                    </span>
+                </td>
                 <td>S/ ${Number(producto.precio).toFixed(2)}</td>
                 <td>${producto.categoriaNombre}</td>
                 <td>
@@ -159,6 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const vencimiento = new Date(`${fechaValor}T00:00:00`);
         vencimiento.setHours(0, 0, 0, 0);
         return hoy >= vencimiento ? 'VENCIDO' : 'VIGENTE';
+    }
+
+    function obtenerEstadoStock(stockValor) {
+        const stock = Number(stockValor || 0);
+        if (stock === 0) return { texto: 'PRODUCTO AGOTADO', clase: 'stock-agotado' };
+        if (stock < 5) return { texto: 'STOCK BAJO', clase: 'stock-bajo' };
+        return { texto: 'NORMAL', clase: 'stock-normal' };
     }
 
     function formatearFecha(fechaValor) {

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Reportes - Hospedaje Ruby</title>
+    <link rel="stylesheet" href="../Estilos/panel.css">
+    <style>
+        .hero { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 40px 0; color: #fff; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 16px; padding: 30px 40px; margin-bottom: 40px; }
+        .hero > div:first-child h1 { font-size: 2.5rem; margin: 0 0 10px 0; }
+        .hero > div:first-child p { margin: 0; opacity: 0.9; }
+        .hero-actions { display: flex; gap: 10px; }
+        .hero-actions button { padding: 10px 20px; background: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: 0.2s; }
+        .hero-actions button:hover { background: rgba(255,255,255,0.3); }
+        
+        .contenedor-filtros { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .titulo-seccion { font-size: 1.4rem; font-weight: 700; color: #1e3a8a; margin: 0 0 20px 0; }
+        
+        .grid-filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .campo-filtro { display: flex; flex-direction: column; }
+        .campo-filtro label { font-size: 0.85rem; font-weight: 700; color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .campo-filtro input { padding: 11px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; outline: none; transition: 0.2s; }
+        .campo-filtro input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        
+        .botones-accion { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn-reporte { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-pdf { background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff; }
+        .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220,38,38,0.35); }
+        .btn-excel { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; }
+        .btn-excel:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(22,163,74,0.35); }
+        .btn-combinado { background: linear-gradient(135deg, #7c3aed, #a855f7); color: #fff; }
+        .btn-combinado:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,58,237,0.35); }
+        
+        .panel-opcion { background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #3b82f6; }
+        .panel-opcion h3 { margin: 0 0 10px 0; color: #1e3a8a; font-size: 1.1rem; }
+        .panel-opcion p { margin: 0; color: #666; font-size: 0.9rem; }
+        
+        .mensaje-exito { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+        .mensaje-error { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; display: none; }
+        
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #f3f4f6; border-top: 2px solid #3b82f6; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .btn-disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <main class="dashboard">
+        <section class="hero">
+            <div>
+                <h1>Generador de Reportes</h1>
+                <p>Genera reportes en PDF filtrados por período de tiempo</p>
+            </div>
+            <div class="hero-actions">
+                <button type="button" onclick="window.location.href='panel_control.html'">← Volver</button>
+            </div>
+        </section>
+
+        <div class="contenedor-filtros">
+            <h2 class="titulo-seccion">Seleccionar período de reporte</h2>
+            
+            <div class="grid-filtros">
+                <div class="campo-filtro">
+                    <label for="fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="fecha-inicio">
+                </div>
+                <div class="campo-filtro">
+                    <label for="fecha-fin">Fecha de fin:</label>
+                    <input type="date" id="fecha-fin">
+                </div>
+            </div>
+
+            <div class="mensaje-exito" id="mensaje-exito"></div>
+            <div class="mensaje-error" id="mensaje-error"></div>
+
+            <h3 style="font-size: 1.1rem; color: #1e3a8a; margin-bottom: 16px;">Selecciona el tipo de reporte:</h3>
+
+            <div class="panel-opcion">
+                <h3>📋 Reporte de Reservas</h3>
+                <p>Muestra todas las reservas registradas en el período seleccionado con detalles de clientes, habitaciones e ingresos.</p>
+                <button class="btn-reporte btn-pdf" id="btn-pdf-reservas" onclick="generarReportePDFReservasBtn()">
+                    <span>📄</span> Generar PDF de Reservas
+                </button>
+                <button class="btn-reporte btn-excel" id="btn-excel-reservas" onclick="generarReporteExcelReservasBtn()">
+                    <span>📊</span> Generar Excel de Reservas
+                </button>
+            </div>
+
+            <div class="panel-opcion">
+                <h3>🛒 Reporte de Ventas</h3>
+                <p>Muestra todas las ventas registradas en el período seleccionado con detalles de productos, montos y métodos de pago.</p>
+                <button class="btn-reporte btn-pdf" id="btn-pdf-ventas" onclick="generarReportePDFVentasBtn()">
+                    <span>📄</span> Generar PDF de Ventas
+                </button>
+                <button class="btn-reporte btn-excel" id="btn-excel-ventas" onclick="generarReporteExcelVentasBtn()">
+                    <span>📊</span> Generar Excel de Ventas
+                </button>
+            </div>
+
+            <div class="panel-opcion">
+                <h3>📊 Reporte Combinado</h3>
+                <p>Muestra un resumen ejecutivo con ingresos por reservas y ventas, seguido de los detalles de ambas operaciones.</p>
+                <button class="btn-reporte btn-combinado" id="btn-pdf-combinado" onclick="generarReportePDFCombinidoBtn()">
+                    <span>📈</span> Generar PDF Combinado
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../Interactividad_js/supabaseClient.js"></script>
+    <script src="../Interactividad_js/rol_guard.js"></script>
+    <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/reportes.js"></script>
+    <script>
+        // ============================================================
+        // Gestor de reportes
+        // ============================================================
+
+        let reservas = [];
+        let ventas = [];
+        let clientes = [];
+
+        // Obtener elementos del DOM
+        const fechaInicio = document.getElementById('fecha-inicio');
+        const fechaFin = document.getElementById('fecha-fin');
+        const mensajeExito = document.getElementById('mensaje-exito');
+        const mensajeError = document.getElementById('mensaje-error');
+
+        // Establecer fechas por defecto (último mes)
+        function establecerFechasDefecto() {
+            const hoy = new Date();
+            const hace30Dias = new Date(hoy);
+            hace30Dias.setDate(hace30Dias.getDate() - 30);
+
+            fechaFin.value = hoy.toISOString().split('T')[0];
+            fechaInicio.value = hace30Dias.toISOString().split('T')[0];
+        }
+
+        // Cargar datos desde Supabase
+        async function cargarDatos() {
+            try {
+                // Cargar reservas
+                const { data: reservasData, error: errorReservas } = await supabaseClient
+                    .from('reserva_habitacion')
+                    .select(`
+                        reserva_id, fecha_entrada, fecha_salida, precio_base, noches_estadia,
+                        importe_total, estado_habitacion,
+                        id_cliente, id_habitacion, id_metodo_pago,
+                        clientes(apellidos_nombres, fecha_nacimiento, dni, distrito_ciudad),
+                        habitaciones(numero_habitacion, tipo_habitacion(nombre)),
+                        metodo_pago(nombre)
+                    `)
+                    .order('fecha_entrada', { ascending: false });
+
+                if (errorReservas) throw errorReservas;
+                reservas = (reservasData || []).map(r => ({
+                    ...r,
+                    reservaId: r.reserva_id,
+                    clienteNombre: r.clientes?.apellidos_nombres || '',
+                    clienteDni: r.clientes?.dni || '',
+                    numeroHabitacion: r.habitaciones?.numero_habitacion || '',
+                    tipoHabitacion: r.habitaciones?.tipo_habitacion?.nombre || '',
+                    precioBase: Number(r.precio_base),
+                    importeTotal: Number(r.importe_total),
+                    metodoPago: r.metodo_pago?.nombre || 'No registrado',
+                    apellidos_nombres: r.clientes?.apellidos_nombres || '',
+                    dni: r.clientes?.dni || '',
+                    numero_habitacion: r.habitaciones?.numero_habitacion || '',
+                    metodo_pago: r.metodo_pago?.nombre || 'No registrado',
+                    importe_total: Number(r.importe_total),
+                    precio_base: Number(r.precio_base)
+                }));
+
+                // Cargar ventas
+                const { data: ventasData, error: errorVentas } = await supabaseClient
+                    .from('ventas')
+                    .select('venta_id, id_cliente, cliente_nombre, subtotal, igv, total, fecha_hora_venta, id_metodo_pago, metodo_pago(nombre)')
+                    .order('fecha_hora_venta', { ascending: false });
+
+                if (errorVentas) throw errorVentas;
+                ventas = (ventasData || []).map(v => ({
+                    ...v,
+                    venta_id: v.venta_id,
+                    dni: v.id_cliente ? clientes.find(c => c.id_cliente === v.id_cliente)?.dni : '',
+                    metodo_pago: v.metodo_pago?.nombre || 'No registrado'
+                }));
+
+                // Cargar clientes
+                const { data: clientesData, error: errorClientes } = await supabaseClient
+                    .from('clientes')
+                    .select('id_cliente, apellidos_nombres, dni');
+
+                if (errorClientes) throw errorClientes;
+                clientes = clientesData || [];
+
+            } catch (error) {
+                console.error('Error al cargar datos:', error);
+                mostrarError('No se pudieron cargar los datos de Supabase.');
+            }
+        }
+
+        // Validar fechas
+        function validarFechas() {
+            if (!fechaInicio.value || !fechaFin.value) {
+                mostrarError('Por favor, selecciona ambas fechas.');
+                return false;
+            }
+
+            const inicio = new Date(fechaInicio.value);
+            const fin = new Date(fechaFin.value);
+
+            if (fin < inicio) {
+                mostrarError('La fecha de fin no puede ser anterior a la fecha de inicio.');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Mostrar mensaje de éxito
+        function mostrarExito(mensaje) {
+            mensajeExito.textContent = mensaje;
+            mensajeExito.style.display = 'block';
+            mensajeError.style.display = 'none';
+            setTimeout(() => { mensajeExito.style.display = 'none'; }, 4000);
+        }
+
+        // Mostrar mensaje de error
+        function mostrarError(mensaje) {
+            mensajeError.textContent = mensaje;
+            mensajeError.style.display = 'block';
+            mensajeExito.style.display = 'none';
+            setTimeout(() => { mensajeError.style.display = 'none'; }, 4000);
+        }
+
+        // Deshabilitar botones
+        function deshabilitarBotones(deshabilitado) {
+            const botones = document.querySelectorAll('.btn-reporte');
+            botones.forEach(btn => {
+                btn.disabled = deshabilitado;
+                if (deshabilitado) {
+                    btn.classList.add('btn-disabled');
+                } else {
+                    btn.classList.remove('btn-disabled');
+                }
+            });
+        }
+
+        // Generar PDF de Reservas
+        async function generarReportePDFReservasBtn() {
+            if (!validarFechas()) return;
+
+            deshabilitarBotones(true);
+            try {
+                const inicio = new Date(fechaInicio.value);
+                const fin = new Date(fechaFin.value);
+                await generarReportePDFReservas(inicio, fin, reservas);
+                mostrarExito('Reporte PDF de reservas generado correctamente.');
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError('Error al generar el reporte PDF.');
+            } finally {
+                deshabilitarBotones(false);
+            }
+        }
+
+        // Generar PDF de Ventas
+        async function generarReportePDFVentasBtn() {
+            if (!validarFechas()) return;
+
+            deshabilitarBotones(true);
+            try {
+                const inicio = new Date(fechaInicio.value);
+                const fin = new Date(fechaFin.value);
+                await generarReportePDFVentas(inicio, fin, ventas);
+                mostrarExito('Reporte PDF de ventas generado correctamente.');
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError('Error al generar el reporte PDF.');
+            } finally {
+                deshabilitarBotones(false);
+            }
+        }
+
+        // Generar PDF Combinado
+        async function generarReportePDFCombinidoBtn() {
+            if (!validarFechas()) return;
+
+            deshabilitarBotones(true);
+            try {
+                const inicio = new Date(fechaInicio.value);
+                const fin = new Date(fechaFin.value);
+                await generarReportePDFCombinado(inicio, fin, reservas, ventas);
+                mostrarExito('Reporte PDF combinado generado correctamente.');
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarError('Error al generar el reporte PDF.');
+            } finally {
+                deshabilitarBotones(false);
+            }
+        }
+
+        // Generar Excel de Reservas
+        function generarReporteExcelReservasBtn() {
+            if (!validarFechas()) return;
+
+            const inicio = new Date(fechaInicio.value);
+            const fin = new Date(fechaFin.value);
+            fin.setHours(23, 59, 59, 999);
+
+            const reservasFiltradas = reservas.filter(r => {
+                const entrada = new Date(r.fecha_entrada);
+                const salida = new Date(r.fecha_salida);
+                return entrada <= fin && salida >= inicio;
+            });
+
+            if (reservasFiltradas.length === 0) {
+                mostrarError(`No hay reservas en el período del ${inicio.toLocaleDateString()} al ${fin.toLocaleDateString()}`);
+                return;
+            }
+
+            const filas = reservasFiltradas.map(r => ({
+                'ID Reserva': r.reserva_id || r.reservaId,
+                'Cliente': r.clientes?.apellidos_nombres || r.clienteNombre || '',
+                'DNI': r.clientes?.dni || r.clienteDni || '',
+                'Habitación': r.habitaciones?.numero_habitacion || r.numeroHabitacion || '',
+                'Entrada': new Date(r.fecha_entrada).toLocaleString('es-PE'),
+                'Salida': new Date(r.fecha_salida).toLocaleString('es-PE'),
+                'Precio Base': Number(r.precio_base || r.precioBase || 0).toFixed(2),
+                'Importe Total': Number(r.importe_total || r.importeTotal || 0).toFixed(2),
+                'Método Pago': r.metodo_pago || r.metodoPago || 'No registrado'
+            }));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), 'Reservas');
+            XLSX.writeFile(wb, `reservas_${inicio.toISOString().split('T')[0]}_a_${fin.toISOString().split('T')[0]}.xlsx`);
+            
+            mostrarExito('Excel de reservas generado correctamente.');
+        }
+
+        // Generar Excel de Ventas
+        function generarReporteExcelVentasBtn() {
+            if (!validarFechas()) return;
+
+            const inicio = new Date(fechaInicio.value);
+            const fin = new Date(fechaFin.value);
+            fin.setHours(23, 59, 59, 999);
+
+            const ventasFiltradas = ventas.filter(v => {
+                const fechaVenta = new Date(v.fecha_hora_venta);
+                return fechaVenta >= inicio && fechaVenta <= fin;
+            });
+
+            if (ventasFiltradas.length === 0) {
+                mostrarError(`No hay ventas en el período del ${inicio.toLocaleDateString()} al ${fin.toLocaleDateString()}`);
+                return;
+            }
+
+            const filas = ventasFiltradas.map(v => ({
+                'ID Venta': v.venta_id,
+                'Cliente': v.cliente_nombre || '',
+                'Subtotal': Number(v.subtotal || 0).toFixed(2),
+                'IGV': Number(v.igv || 0).toFixed(2),
+                'Total': Number(v.total || 0).toFixed(2),
+                'Fecha y Hora': new Date(v.fecha_hora_venta).toLocaleString('es-PE'),
+                'Método Pago': v.metodo_pago || 'No registrado'
+            }));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), 'Ventas');
+            XLSX.writeFile(wb, `ventas_${inicio.toISOString().split('T')[0]}_a_${fin.toISOString().split('T')[0]}.xlsx`);
+            
+            mostrarExito('Excel de ventas generado correctamente.');
+        }
+
+        // Inicializar
+        async function inicializar() {
+            establecerFechasDefecto();
+            await cargarDatos();
+        }
+
+        inicializar();
+    </script>
+</body>
+</html>

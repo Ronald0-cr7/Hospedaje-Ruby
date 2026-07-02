@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const ventaSubtotal = document.getElementById('venta-subtotal');
     const ventaIgv = document.getElementById('venta-igv');
     const ventaTotal = document.getElementById('venta-total');
+    const ventaSubtotalShow = document.getElementById('venta-subtotal-show');
+    const ventaIgvShow = document.getElementById('venta-igv-show');
+    const ventaTotalShow = document.getElementById('venta-total-show');
     const agregarDetalleBtn = document.getElementById('agregar-detalle-btn');
     const cancelarEdicionBtn = document.getElementById('cancelar-edicion-btn');
     const detalleVentaBody = document.getElementById('detalle-venta-body');
@@ -26,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let carritoVenta = [];
     let ventaEditandoId = null; // venta_id (texto) cuando estamos editando
     const submitBtn = form.querySelector('button[type="submit"]');
+    const UMBRAL_STOCK_BAJO = 5;
 
     function fechaAhoraLocal() {
         const now = new Date();
@@ -112,9 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
             opt.dataset.precio = p.precio_venta;
             opt.dataset.nombre = p.nombre_producto;
             opt.dataset.stock = p.stock;
-            opt.textContent = `${p.nombre_producto} — S/ ${parseFloat(p.precio_venta).toFixed(2)} (stock: ${p.stock})`;
+            const stockNum = Number(p.stock || 0);
+            const etiquetaStock = stockNum <= UMBRAL_STOCK_BAJO
+                ? `⚠ stock bajo: ${stockNum}`
+                : `stock: ${stockNum}`;
+            opt.textContent = `${p.nombre_producto} — S/ ${parseFloat(p.precio_venta).toFixed(2)} (${etiquetaStock})`;
             ventaProducto.appendChild(opt);
         });
+
     }
 
     function cargarClientesEnSelect() {
@@ -149,6 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ventaSubtotal.value = subtotal.toFixed(2);
         ventaIgv.value = igv.toFixed(2);
         ventaTotal.value = total.toFixed(2);
+        if (ventaSubtotalShow) ventaSubtotalShow.textContent = `S/ ${subtotal.toFixed(2)}`;
+        if (ventaIgvShow) ventaIgvShow.textContent = `S/ ${igv.toFixed(2)}`;
+        if (ventaTotalShow) ventaTotalShow.textContent = `S/ ${total.toFixed(2)}`;
 
         return { subtotal, igv, total };
     }
@@ -462,9 +474,9 @@ document.addEventListener('DOMContentLoaded', () => {
             form.reset();
             ventaFecha.value = fechaAhoraLocal();
             ventaPrecio.value = '';
-            ventaSubtotal.value = '';
-            ventaIgv.value = '';
-            ventaTotal.value = '';
+            ventaSubtotal.value = '0.00';
+            ventaIgv.value = '0.00';
+            ventaTotal.value = '0.00';
             ventaMetodoPago.value = 'Efectivo';
             ventaSinCliente.checked = false;
             ventaEditandoId = null;

@@ -189,6 +189,10 @@ td button:last-child:hover{background:linear-gradient(135deg,#dc2626 0%, #b91c1c
 .estado-badge{display:inline-block;min-width:92px;padding:6px 10px;border-radius:999px;font-weight:bold;letter-spacing:0.4px}
 .estado-vencido{color:#b42318;background-color:#fdecec}
 .estado-vigente{color:#116530;background-color:#e9f8ef}
+.estado-badge-stock{display:inline-block;min-width:130px;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:0.3px;font-size:.74rem}
+.stock-normal{color:#116530;background-color:#e9f8ef}
+.stock-bajo{color:#92400e;background-color:#fef3c7}
+.stock-agotado{color:#b42318;background-color:#fdecec}
 tr.producto-vencido{background-color:#fff1f1}
 tr.producto-vigente{background-color:#f1fff6}
 
@@ -273,6 +277,9 @@ body[data-theme="oscuro"] .estado-vencido{
     background:#4a1717;
     color:#fca5a5;
 }
+body[data-theme="oscuro"] .stock-normal{background:#163524;color:#6ee7b7}
+body[data-theme="oscuro"] .stock-bajo{background:#4a3415;color:#fcd34d}
+body[data-theme="oscuro"] .stock-agotado{background:#4a1717;color:#fca5a5}
 body[data-theme="oscuro"] .tienda,
 body[data-theme="oscuro"] .seccion-imagen,
 body[data-theme="oscuro"] .seccion-formulario,

@@ -74,94 +74,92 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../Interactividad_js/supabaseClient.js"></script>
     <script src="../Interactividad_js/rol_guard.js"></script>
     <script src="../Interactividad_js/tema.js"></script>
+    <script src="../Interactividad_js/reportes.js"></script>
     <script src="../Interactividad_js/panel_estadistico.js"></script>
     <script>
-    // REQUISITO 11: Generar PDF de reportes
-    document.getElementById('btn-pdf-reporte').addEventListener('click', () => {
-        const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-        const ventas = JSON.parse(localStorage.getItem('ventas') || '[]');
-        const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
-        const estados = JSON.parse(localStorage.getItem('habitaciones_estados') || '{}');
+    document.getElementById('btn-pdf-reporte').addEventListener('click', async () => {
+        const fechaFin = new Date();
+        const fechaInicio = new Date();
+        fechaInicio.setDate(fechaInicio.getDate() - 30);
 
-        const totalReservas = reservas.reduce((s, r) => s + Number(r.importeTotal || 0), 0);
-        const totalVentas = ventas.reduce((s, v) => s + Number(v.total || 0), 0);
+        const { data: reservasData, error: errorReservas } = await supabaseClient
+            .from('reserva_habitacion')
+            .select(`
+                reserva_id, fecha_entrada, fecha_salida, importe_total,
+                clientes(apellidos_nombres, dni),
+                habitaciones(numero_habitacion),
+                metodo_pago(nombre)
+            `)
+            .order('fecha_entrada', { ascending: false });
 
-        const metPagoR = reservas.reduce((acc, r) => {
-            const m = r.metodoPago || 'No registrado';
-            acc[m] = (acc[m] || 0) + Number(r.importeTotal || 0);
-            return acc;
-        }, {});
-        const metPagoV = ventas.reduce((acc, v) => {
-            const m = v.metodoPago || 'Efectivo';
-            acc[m] = (acc[m] || 0) + Number(v.total || 0);
-            return acc;
-        }, {});
-        const conteoEstados = { Disponible:0, Ocupada:0, Limpieza:0, Mantenimiento:0 };
-        Object.values(estados).forEach(e => { if (conteoEstados[e] !== undefined) conteoEstados[e]++; });
+        if (errorReservas) {
+            manejarErrorSupabase(errorReservas, 'No se pudieron cargar las reservas para el reporte PDF.');
+            return;
+        }
 
-        const fecha = new Date().toLocaleString('es-PE');
-        const html = `
-        <html><head><meta charset="UTF-8"><style>
-        body{font-family:Arial,sans-serif;padding:30px;color:#1e293b;}
-        h1{color:#1e3a8a;border-bottom:3px solid #3b82f6;padding-bottom:8px;}
-        h2{color:#1e40af;margin-top:24px;font-size:1.1rem;}
-        .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0;}
-        .kpi{background:#eff6ff;border-radius:10px;padding:16px;text-align:center;}
-        .kpi span{display:block;font-size:1.4rem;font-weight:800;color:#1e40af;}
-        .kpi small{font-size:.8rem;color:#64748b;}
-        table{width:100%;border-collapse:collapse;margin-top:10px;}
-        th{background:#1e3a8a;color:#fff;padding:8px;text-align:left;font-size:.82rem;}
-        td{padding:7px 8px;border-bottom:1px solid #e2e8f0;font-size:.82rem;}
-        tr:nth-child(even){background:#f8fafc;}
-        .footer{margin-top:30px;text-align:center;color:#94a3b8;font-size:.75rem;border-top:1px solid #e2e8f0;padding-top:10px;}
-        </style></head><body>
-        <h1>🏨 Reporte General — Hospedaje Ruby</h1>
-        <p><strong>Generado:</strong> ${fecha}</p>
+        const reservas = (reservasData || []).map(r => ({
+            reserva_id: r.reserva_id,
+            fecha_entrada: r.fecha_entrada,
+            fecha_salida: r.fecha_salida,
+            importe_total: Number(r.importe_total || 0),
+            apellidos_nombres: r.clientes?.apellidos_nombres || '—',
+            dni: r.clientes?.dni || '—',
+            numero_habitacion: r.habitaciones?.numero_habitacion || '—',
+            metodo_pago: r.metodo_pago?.nombre || 'No registrado'
+        }));
 
-        <div class="kpi-grid">
-            <div class="kpi"><span>S/ ${totalReservas.toFixed(2)}</span><small>Total Reservas</small></div>
-            <div class="kpi"><span>S/ ${totalVentas.toFixed(2)}</span><small>Total Ventas</small></div>
-            <div class="kpi"><span>S/ ${(totalReservas + totalVentas).toFixed(2)}</span><small>Ingreso Total</small></div>
-        </div>
+        const { data: ventasData, error: errorVentas } = await supabaseClient
+            .from('ventas')
+            .select(`
+                venta_id, fecha_hora_venta, cliente_nombre, subtotal, igv, total,
+                metodo_pago(nombre)
+            `)
+            .order('fecha_hora_venta', { ascending: false });
 
-        <h2>📊 Ocupación de Habitaciones</h2>
-        <table><tr>${Object.keys(conteoEstados).map(e=>`<th>${e}</th>`).join('')}</tr>
-        <tr>${Object.values(conteoEstados).map(v=>`<td>${v}</td>`).join('')}</tr></table>
+        if (errorVentas) {
+            manejarErrorSupabase(errorVentas, 'No se pudieron cargar las ventas para el reporte PDF.');
+            return;
+        }
 
-        <h2>💳 Ingresos por Método de Pago — Reservas</h2>
-        <table><tr><th>Método</th><th>Total (S/)</th></tr>
-        ${Object.entries(metPagoR).map(([m,t])=>`<tr><td>${m}</td><td>S/ ${Number(t).toFixed(2)}</td></tr>`).join('')}
-        </table>
+        const ventas = (ventasData || []).map(v => ({
+            venta_id: v.venta_id,
+            fecha_hora_venta: v.fecha_hora_venta,
+            cliente_nombre: v.cliente_nombre || 'Venta sin cliente',
+            subtotal: Number(v.subtotal || 0),
+            igv: Number(v.igv || 0),
+            total: Number(v.total || 0),
+            metodo_pago: v.metodo_pago?.nombre || 'No registrado'
+        }));
 
-        <h2>🛒 Ingresos por Método de Pago — Ventas</h2>
-        <table><tr><th>Método</th><th>Total (S/)</th></tr>
-        ${Object.entries(metPagoV).map(([m,t])=>`<tr><td>${m}</td><td>S/ ${Number(t).toFixed(2)}</td></tr>`).join('')}
-        </table>
-
-        <h2>🛏 Últimas Reservas (${Math.min(reservas.length,10)})</h2>
-        <table><tr><th>ID</th><th>Cliente</th><th>Habitación</th><th>Entrada</th><th>Salida</th><th>Total</th><th>Método</th></tr>
-        ${reservas.slice(-10).map(r=>`<tr><td>${r.reservaId}</td><td>${r.clienteNombre}</td><td>${r.numeroHabitacion}</td><td>${new Date(r.fechaEntrada).toLocaleDateString('es-PE')}</td><td>${new Date(r.fechaSalida).toLocaleDateString('es-PE')}</td><td>S/ ${Number(r.importeTotal).toFixed(2)}</td><td>${r.metodoPago||'-'}</td></tr>`).join('')}
-        </table>
-
-        <div class="footer">Hospedaje Ruby — Sistema de Gestión © ${new Date().getFullYear()}</div>
-        </body></html>`;
-
-        const win = window.open('', '_blank');
-        win.document.write(html);
-        win.document.close();
-        setTimeout(() => win.print(), 500);
+        await generarReportePDFCombinado(fechaInicio, fechaFin, reservas, ventas);
     });
 
     // REQUISITO 11: Excel con datos de clientes
-    document.getElementById('btn-excel-clientes').addEventListener('click', () => {
+    document.getElementById('btn-excel-clientes').addEventListener('click', async () => {
         if (typeof XLSX === 'undefined') { alert('No se pudo cargar la librería Excel.'); return; }
-        const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
-        const reservas = JSON.parse(localStorage.getItem('reservas') || '[]');
-        const ventas = JSON.parse(localStorage.getItem('ventas') || '[]');
+        const { data: clientesData, error: errClientes } = await supabaseClient
+            .from('clientes')
+            .select('id_cliente, apellidos_nombres, dni, distrito_ciudad, telefono');
+        if (errClientes) { manejarErrorSupabase(errClientes, 'No se pudieron cargar los clientes.'); return; }
+
+        const { data: reservasData, error: errReservas } = await supabaseClient
+            .from('reserva_habitacion')
+            .select('id_cliente, importe_total');
+        if (errReservas) { manejarErrorSupabase(errReservas, 'No se pudieron cargar las reservas.'); return; }
+
+        const { data: ventasData, error: errVentas } = await supabaseClient
+            .from('ventas')
+            .select('id_cliente, total');
+        if (errVentas) { manejarErrorSupabase(errVentas, 'No se pudieron cargar las ventas.'); return; }
+
+        const clientes = clientesData || [];
+        const reservas = reservasData || [];
+        const ventas = ventasData || [];
 
         const filas = clientes.map(c => {
             const r = reservas.filter(x => String(x.clienteId) === String(c.id_cliente));

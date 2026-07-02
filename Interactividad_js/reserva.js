@@ -4,6 +4,8 @@
 const reservaForm = document.getElementById("reserva-form");
 const inventoryBody = document.getElementById("inventory-body");
 const clienteRegistrado = document.getElementById("cliente-registrado");
+const resumenMetodosReservas = document.getElementById("resumen-metodos-reservas");
+const totalReservasMetodos = document.getElementById("total-reservas-metodos");
 
 const campos = {
 	clienteId:              document.getElementById("cliente-id"),
@@ -28,6 +30,23 @@ let reservas = [];        // copia en memoria de reserva_habitacion (con datos "
 let clientes = [];
 let habitaciones = [];    // [{ id_habitacion, numero, tipo, precio_base, estado }]
 let metodosPago = [];     // [{ id_metodo_pago, nombre }]
+
+function obtenerReservasFiltradasSegunRangoActual() {
+	const fechaDesde = document.getElementById("fecha-desde")?.value;
+	const fechaHasta = document.getElementById("fecha-hasta")?.value;
+
+	if (!fechaDesde || !fechaHasta) return reservas;
+
+	const desde = new Date(fechaDesde);
+	const hasta = new Date(fechaHasta);
+	hasta.setHours(23, 59, 59, 999);
+
+	return reservas.filter(r => {
+		const entrada = new Date(r.fechaEntrada);
+		const salida = new Date(r.fechaSalida);
+		return entrada <= hasta && salida >= desde;
+	});
+}
 
 // ── CARGA INICIAL DESDE SUPABASE ──────────────────────────────
 
@@ -103,11 +122,13 @@ function mapearReservaPlano(r) {
 }
 
 async function cargarTodoYRenderizar() {
+	await sincronizarReservasVencidas();
 	await Promise.all([cargarClientesGuardados(), cargarHabitacionesDisponiblesParaSelect(), cargarMetodosPago(), cargarReservas()]);
 	cargarClientesEnSelect();
 	poblarSelectHabitaciones();
 	poblarSelectMetodoPago();
 	renderizarTablaReservas(reservas);
+	renderizarResumenMetodosReserva(reservas);
 	actualizarDisponibilidadHabitaciones();
 }
 
@@ -372,6 +393,37 @@ async function eliminarReserva(reservaId, idHabitacion) {
 	await cargarTodoYRenderizar();
 }
 
+// ── SINCRONIZACIÓN DE RESERVAS VENCIDAS ─────────────────────
+
+async function sincronizarReservasVencidas() {
+	const ahoraIso = new Date().toISOString();
+	const { data, error } = await supabaseClient
+		.from('reserva_habitacion')
+		.select('reserva_id, id_habitacion')
+		.eq('estado_habitacion', 'Ocupada')
+		.lte('fecha_salida', ahoraIso);
+
+	if (error) {
+		manejarErrorSupabase(error, 'No se pudieron sincronizar las reservas vencidas.');
+		return;
+	}
+
+	const vencidas = data || [];
+	if (vencidas.length === 0) return;
+
+	for (const reserva of vencidas) {
+		await supabaseClient
+			.from('reserva_habitacion')
+			.update({ estado_habitacion: 'Limpieza' })
+			.eq('reserva_id', reserva.reserva_id);
+
+		await supabaseClient
+			.from('habitaciones')
+			.update({ estado: 'Limpieza', inicio_ocupacion: null })
+			.eq('id_habitacion', reserva.id_habitacion);
+	}
+}
+
 // ── FILTROS Y EXCEL ───────────────────────────────────────────
 
 function filtrarReservasPorFechas() {
@@ -391,10 +443,52 @@ function filtrarReservasPorFechas() {
 	});
 
 	renderizarTablaReservas(filtradas);
+	renderizarResumenMetodosReserva(filtradas);
 }
 
 function mostrarTodasLasReservas() {
 	renderizarTablaReservas(reservas);
+	renderizarResumenMetodosReserva(reservas);
+}
+
+function renderizarResumenMetodosReserva(lista = reservas) {
+	if (!resumenMetodosReservas) return;
+
+	const iconos = {
+		"Efectivo": "💵",
+		"Tarjeta": "💳",
+		"Transferencia": "🏦",
+		"Yape/Plin": "📱"
+	};
+
+	const resumen = (lista || []).reduce((acc, r) => {
+		const metodo = r.metodoPago || "No registrado";
+		acc[metodo] = (acc[metodo] || 0) + Number(r.importeTotal || 0);
+		return acc;
+	}, {});
+
+	const entradas = Object.entries(resumen).sort((a, b) => b[1] - a[1]);
+
+	if (entradas.length === 0) {
+		resumenMetodosReservas.innerHTML = `
+			<div class="metodo-item-reserva">
+				<strong>Sin reservas registradas</strong>
+				<span>S/ 0.00</span>
+			</div>
+		`;
+		if (totalReservasMetodos) totalReservasMetodos.textContent = "S/ 0.00";
+		return;
+	}
+
+	resumenMetodosReservas.innerHTML = entradas.map(([metodo, total]) => `
+		<div class="metodo-item-reserva">
+			<strong>${iconos[metodo] || "🧾"} ${metodo}</strong>
+			<span>S/ ${Number(total).toFixed(2)}</span>
+		</div>
+	`).join("");
+
+	const totalGeneral = entradas.reduce((acc, [, total]) => acc + Number(total), 0);
+	if (totalReservasMetodos) totalReservasMetodos.textContent = `S/ ${totalGeneral.toFixed(2)}`;
 }
 
 function exportReservasExcel() {
@@ -421,14 +515,92 @@ function exportReservasExcel() {
 	XLSX.writeFile(wb, "reservas.xlsx");
 }
 
+async function exportReservasPdf() {
+	if (typeof html2pdf === 'undefined') {
+		alert('No se pudo cargar la librería PDF.');
+		return;
+	}
+
+	const lista = obtenerReservasFiltradasSegunRangoActual();
+	if (lista.length === 0) {
+		alert('No hay reservas para exportar en el período seleccionado.');
+		return;
+	}
+
+	const total = lista.reduce((acc, r) => acc + Number(r.importeTotal || 0), 0);
+	const filasHtml = lista.map((r, i) => `
+		<tr>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${i + 1}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${r.reservaId}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${r.clienteNombre}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${r.clienteDni}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${r.numeroHabitacion}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${formatearFecha(r.fechaEntrada)}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${formatearFecha(r.fechaSalida)}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;text-align:right;">S/ ${Number(r.importeTotal || 0).toFixed(2)}</td>
+			<td style="border:1px solid #ddd;padding:6px;font-size:11px;">${r.estadoHabitacion}</td>
+		</tr>
+	`).join('');
+
+	const contenedor = document.createElement('div');
+	contenedor.innerHTML = `
+		<div style="font-family:Arial,sans-serif;padding:16px;color:#0f172a;">
+			<h1 style="margin:0 0 8px;color:#1e3a8a;">Hospedaje Ruby</h1>
+			<h2 style="margin:0 0 12px;color:#2563eb;">Reporte de Reservas</h2>
+			<p style="font-size:12px;">Generado: ${new Date().toLocaleString('es-PE')}</p>
+			<table style="width:100%;border-collapse:collapse;margin-top:12px;">
+				<thead>
+					<tr style="background:#1e3a8a;color:#fff;">
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">#</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">ID Reserva</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Cliente</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">DNI</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Hab.</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Entrada</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Salida</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Importe</th>
+						<th style="border:1px solid #ddd;padding:7px;font-size:11px;">Estado</th>
+					</tr>
+				</thead>
+				<tbody>${filasHtml}</tbody>
+			</table>
+			<p style="margin-top:12px;font-size:13px;"><strong>Total:</strong> S/ ${total.toFixed(2)}</p>
+		</div>
+	`;
+
+	document.body.appendChild(contenedor);
+	try {
+		await html2pdf().set({
+			margin: 8,
+			filename: `reservas_${new Date().toISOString().slice(0, 10)}.pdf`,
+			html2canvas: { scale: 2 },
+			jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' }
+		}).from(contenedor).save();
+	} finally {
+		document.body.removeChild(contenedor);
+	}
+}
+
 // ── VALIDACIONES ──────────────────────────────────────────────
 
 function validarUnicidad(reservaId, dni) {
 	const reservaDuplicada = reservas.find(r => r.reservaId === reservaId && r.reservaId !== filaEditando);
 	if (reservaDuplicada) return { valido: false, mensaje: "El ID de reserva ya existe." };
 
-	const dniDuplicado = reservas.find(r => r.clienteDni === dni && r.reservaId !== filaEditando);
-	if (dniDuplicado) return { valido: false, mensaje: "Ya existe una reserva con ese DNI." };
+	// REQUISITO 1: Permitir nuevas reservas con el mismo DNI, siempre que la anterior haya finalizado
+	// Solo bloquear si existe una reserva ACTIVA o FUTURA con el mismo DNI
+	const ahora = new Date();
+	const dniConReservaActiva = reservas.find(r => {
+		if (r.clienteDni !== dni || r.reservaId === filaEditando) return false;
+		const fechaSalida = new Date(r.fechaSalida);
+		return fechaSalida > ahora; // Solo bloquear si la reserva es futura/activa
+	});
+	if (dniConReservaActiva) {
+		return {
+			valido: false,
+			mensaje: `No se puede crear una nueva reserva con DNI ${dni}. Existe una reserva activa para este cliente. Contacte con recepción.`
+		};
+	}
 
 	return { valido: true };
 }
@@ -543,23 +715,20 @@ if (clienteRegistrado) clienteRegistrado.addEventListener("change", cargarClient
 const exportBtn = document.getElementById('export-reservas-btn');
 if (exportBtn) exportBtn.addEventListener('click', exportReservasExcel);
 
+const exportPdfBtn = document.getElementById('export-reservas-pdf-btn');
+if (exportPdfBtn) exportPdfBtn.addEventListener('click', exportReservasPdf);
+
 const btnFiltrar = document.getElementById("filtrar-fechas-btn");
 if (btnFiltrar) btnFiltrar.addEventListener("click", filtrarReservasPorFechas);
 
 const btnMostrarTodas = document.getElementById("mostrar-todas-btn");
 if (btnMostrarTodas) btnMostrarTodas.addEventListener("click", mostrarTodasLasReservas);
 
-// ── LIBERAR HABITACIONES CON RESERVA VENCIDA ──────────────────
-// (la limpieza automática a "Disponible" ya la hace gestionar_habitaciones.js
-//  cada 30s sobre la tabla `habitaciones`; aquí solo refrescamos la vista)
+// ── SINCRONIZACIÓN AUTOMÁTICA DE ESTADOS ──────────────────────
 async function refrescarSiHayVencidas() {
-	const ahora = new Date();
-	const hayVencidas = reservas.some(r =>
-		new Date(r.fechaSalida) <= ahora && r.estadoHabitacion === 'Ocupada'
-	);
-	if (hayVencidas) await cargarTodoYRenderizar();
+	await cargarTodoYRenderizar();
 }
-setInterval(refrescarSiHayVencidas, 60000);
+setInterval(refrescarSiHayVencidas, 30000);
 
 // ── INIT ──────────────────────────────────────────────────────
 cargarTodoYRenderizar();

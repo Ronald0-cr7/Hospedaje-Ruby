@@ -107,7 +107,17 @@
   <section class="tabla-reservas">
     <h2>Tabla de reserva de habitaciones</h2>
 
+        <div class="card-resumen-reservas">
+            <h3>Resumen de ingresos por reservas</h3>
+            <div id="resumen-metodos-reservas" class="resumen-metodos-reservas"></div>
+            <div class="total-resumen-reservas">
+                <span>Total reservas:</span>
+                <strong id="total-reservas-metodos">S/ 0.00</strong>
+            </div>
+        </div>
+
         <button id="export-reservas-btn" style="margin-bottom:12px">Descargar Excel</button>
+        <button id="export-reservas-pdf-btn" style="margin-bottom:12px">Descargar PDF</button>
 <div class="filtros-fecha">
     <br>
     <br>    
@@ -158,6 +168,7 @@
 </section>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../Interactividad_js/supabaseClient.js"></script>
     <script src="../Interactividad_js/rol_guard.js"></script>
